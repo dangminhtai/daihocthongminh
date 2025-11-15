@@ -170,18 +170,19 @@ export interface School {
 }
 
 // --- Các interface cho Chat ---
-export interface ChatMessage {
-    text: string;
-    role: 'user' | 'model';
-    timestamp: Date;
-}
-
 export interface IMessagePart {
     text?: string;
     fileData?: {
         mimeType?: string;
         fileUri?: string;
+        localPreviewUrl?: string; // Dành cho xem trước phía client trước khi tải lên
     };
+}
+
+export interface ChatMessage {
+  parts: IMessagePart[];
+  role: 'user' | 'model';
+  timestamp: Date;
 }
 
 export interface IChatTurn {

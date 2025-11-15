@@ -1,35 +1,49 @@
 import apiClient from './apiClient';
-import { ChatMessage, IChatTurn } from '../class/types';
+import { ChatMessage, IChatTurn, IMessagePart } from '../class/types';
 
 export class ChatService {
 
   static async sendMessage(
     channelId: string,
     message: string,
-    useGoogleSearch: boolean
-  ): Promise<string> {
-    const data = await apiClient.post<{ response: string }>('/api/chat', { channelId, message, useGoogleSearch });
-    return data.response;
+    useGoogleSearch: boolean,
+    file?: File | null
+  ): Promise<ChatMessage> {
+    const formData = new FormData();
+    formData.append('channelId', channelId);
+    formData.append('message', message);
+    formData.append('useGoogleSearch', String(useGoogleSearch));
+    if (file) {
+      formData.append('file', file);
+    }
+    
+    // API giờ đây trả về phần model của lượt trò chuyện mới
+    const newTurnPart = await apiClient.upload<{ model: { parts: IMessagePart[] } }>('/api/chat', formData);
+
+    return {
+      role: 'model',
+      parts: newTurnPart.model.parts,
+      timestamp: new Date()
+    };
   }
 
   static async getHistory(channelId: string): Promise<ChatMessage[]> {
     const turns = await apiClient.get<IChatTurn[]>(`/api/chat/history/${channelId}`);
     
-    // Chuyển đổi cấu trúc 'turns' thành danh sách 'ChatMessage' phẳng để UI dễ dàng render
     const messages: ChatMessage[] = [];
     turns.forEach(turn => {
         const createdAt = turn.createdAt ? new Date(turn.createdAt) : new Date();
-        if (turn.user && turn.user.parts[0]?.text) {
+        if (turn.user && turn.user.parts.length > 0) {
              messages.push({
                 role: 'user',
-                text: turn.user.parts[0].text,
+                parts: turn.user.parts,
                 timestamp: createdAt,
             });
         }
-       if (turn.model && turn.model.parts[0]?.text) {
+       if (turn.model && turn.model.parts.length > 0) {
             messages.push({
                 role: 'model',
-                text: turn.model.parts[0].text,
+                parts: turn.model.parts,
                 timestamp: createdAt,
             });
         }
