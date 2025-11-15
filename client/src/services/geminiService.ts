@@ -1,11 +1,12 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { MajorSuggestion, CareerSuggestion, MajorDetails, QuizRecommendation } from '../class/types';
+import { MajorSuggestion, CareerSuggestion, MajorDetails, QuizRecommendation, QuizTurn, NextQuizStep } from '../class/types';
 import { geminiMajorPrompt } from '../config/prompt/majors/gemini_conf';
 import { geminiCareerPrompt } from '../config/prompt/careers/gemini_conf';
 import { geminiMajorDetailsPrompt } from '../config/prompt/majors/gemini_details_conf';
 import { geminiFactPrompt } from "../config/prompt/facts_conf";
 import { geminiQuizPrompt } from "../config/prompt/quiz_conf";
+import { geminiQuizGeneratorPrompt } from "../config/prompt/quiz_generator_conf";
 import { ERROR_MESSAGES, ERROR_LOG_MESSAGES } from '../config/errors';
 
 // Initialize API key
@@ -128,11 +129,42 @@ export const getCareerFact = async (): Promise<string> => {
 };
 
 /**
+ * Tạo câu hỏi trắc nghiệm tiếp theo dựa trên lịch sử
+ * @param history - Mảng các cặp câu hỏi và câu trả lời trước đó
+ * @returns Đối tượng chứa câu hỏi, lựa chọn tiếp theo và cờ isComplete
+ */
+export const generateNextQuizQuestion = async (history: QuizTurn[]): Promise<NextQuizStep> => {
+  try {
+    if (!apiKey) {
+      throw new Error(ERROR_MESSAGES.API_KEY_NOT_CONFIGURED);
+    }
+
+    const historyText = history.length > 0
+      ? history.map(turn => `Q: ${turn.question}\nA: ${turn.answer}`).join('\n\n')
+      : "Đây là câu hỏi đầu tiên.";
+
+    const response = await ai.models.generateContent({
+      model: geminiQuizGeneratorPrompt.model,
+      contents: geminiQuizGeneratorPrompt.contents.replace("{{history}}", historyText),
+      config: geminiQuizGeneratorPrompt.resSchema,
+    });
+
+    const jsonText = response.text.trim();
+    const nextStep: NextQuizStep = JSON.parse(jsonText);
+    return nextStep;
+  } catch (error: any) {
+    console.error("Lỗi khi tạo câu hỏi trắc nghiệm tiếp theo:", error);
+    throw new Error("Không thể tạo câu hỏi tiếp theo. Vui lòng thử lại.");
+  }
+};
+
+
+/**
  * Gợi ý nghề nghiệp dựa trên kết quả trắc nghiệm
  * @param answers - Mảng các câu trả lời của người dùng
  * @returns Danh sách gợi ý nghề nghiệp được cá nhân hóa
  */
-export const getQuizRecommendations = async (answers: { question: string, answer: string }[]): Promise<QuizRecommendation[]> => {
+export const getQuizRecommendations = async (answers: QuizTurn[]): Promise<QuizRecommendation[]> => {
   try {
     if (!apiKey) {
       throw new Error(ERROR_MESSAGES.API_KEY_NOT_CONFIGURED);

@@ -35,17 +35,21 @@ export interface MajorDetails {
   careerOrientations: string[];
 }
 
-// Các kiểu dữ liệu mới cho Trắc nghiệm
-export interface QuizOption {
-  text: string;
-  nextQuestion: string | null;
-  payload: string;
-  requiresInput?: boolean;
-}
-
+// Các kiểu dữ liệu mới cho Trắc nghiệm Động
 export interface QuizQuestion {
   question: string;
-  options: QuizOption[];
+  options: string[];
+}
+
+export interface NextQuizStep {
+  question?: string;
+  options?: string[];
+  isComplete: boolean;
+}
+
+export interface QuizTurn {
+  question: string;
+  answer: string;
 }
 
 export interface QuizRecommendation {

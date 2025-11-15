@@ -1,9 +1,9 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { QUIZ_DATA } from '../config/constants';
-import { QuizQuestion, QuizRecommendation } from '../class/types';
-import { getQuizRecommendations } from '../services/geminiService';
+import { INITIAL_QUIZ_QUESTION } from '../config/constants';
+import { QuizQuestion, QuizRecommendation, QuizTurn } from '../class/types';
+import { generateNextQuizQuestion, getQuizRecommendations } from '../services/geminiService';
 import { UI_MESSAGES } from '../config/ui';
 import BackButton from './common/BackButton';
 import LoadingSpinner from './common/LoadingSpinner';
@@ -14,50 +14,28 @@ interface QuizProps {
 }
 
 const Quiz: React.FC<QuizProps> = ({ onBack }) => {
-    const [currentQuestionId, setCurrentQuestionId] = useState('start');
-    const [answers, setAnswers] = useState<{ question: string; answer: string }[]>([]);
-    const [showCustomInput, setShowCustomInput] = useState(false);
-    const [customInputValue, setCustomInputValue] = useState('');
-    const [recommendations, setRecommendations] = useState<QuizRecommendation[]>([]);
+    const [history, setHistory] = useState<QuizTurn[]>([]);
+    const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(INITIAL_QUIZ_QUESTION);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [recommendations, setRecommendations] = useState<QuizRecommendation[]>([]);
+    const [customInputActive, setCustomInputActive] = useState(false);
+    const [customInputValue, setCustomInputValue] = useState('');
 
-    const currentQuestion: QuizQuestion = QUIZ_DATA[currentQuestionId];
-
-    const handleOptionClick = (option: typeof currentQuestion.options[0]) => {
-        const newAnswer = { question: currentQuestion.question, answer: option.payload || option.text };
-
-        if (option.requiresInput) {
-            setAnswers(prev => [...prev, newAnswer]);
-            setShowCustomInput(true);
-            return;
-        }
-
-        const nextAnswers = [...answers, newAnswer];
-        setAnswers(nextAnswers);
-
-        if (option.nextQuestion) {
-            setCurrentQuestionId(option.nextQuestion);
-        } else {
-            handleSubmit(nextAnswers);
-        }
-    };
-
-    const handleCustomSubmit = () => {
-        if (!customInputValue.trim()) return;
-        const newAnswer = { question: "Sở thích/Xu hướng khác", answer: customInputValue };
-        const nextAnswers = [...answers, newAnswer];
-        setAnswers(nextAnswers);
-        handleSubmit(nextAnswers);
-        setShowCustomInput(false);
-    };
-
-    const handleSubmit = useCallback(async (finalAnswers: { question: string; answer: string }[]) => {
+    const getNextStep = useCallback(async (updatedHistory: QuizTurn[]) => {
         setIsLoading(true);
+        setCurrentQuestion(null);
         setError(null);
         try {
-            const result = await getQuizRecommendations(finalAnswers);
-            setRecommendations(result);
+            const result = await generateNextQuizQuestion(updatedHistory);
+            if (result.isComplete) {
+                // AI đã có đủ thông tin, lấy kết quả cuối cùng
+                const finalRecs = await getQuizRecommendations(updatedHistory);
+                setRecommendations(finalRecs);
+            } else {
+                // Hiển thị câu hỏi tiếp theo
+                setCurrentQuestion({ question: result.question!, options: result.options! });
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : UI_MESSAGES.COMMON.GENERIC_ERROR);
         } finally {
@@ -65,12 +43,28 @@ const Quiz: React.FC<QuizProps> = ({ onBack }) => {
         }
     }, []);
 
+    const handleSelectAnswer = (answer: string) => {
+        if (!currentQuestion) return;
+
+        const newTurn: QuizTurn = { question: currentQuestion.question, answer };
+        const updatedHistory = [...history, newTurn];
+        setHistory(updatedHistory);
+        getNextStep(updatedHistory);
+    };
+
+    const handleCustomSubmit = () => {
+        if (!customInputValue.trim() || !currentQuestion) return;
+        handleSelectAnswer(customInputValue.trim());
+        setCustomInputActive(false);
+        setCustomInputValue('');
+    };
+
     const resetQuiz = () => {
-        setCurrentQuestionId('start');
-        setAnswers([]);
+        setHistory([]);
+        setCurrentQuestion(INITIAL_QUIZ_QUESTION);
         setRecommendations([]);
         setError(null);
-        setShowCustomInput(false);
+        setCustomInputActive(false);
         setCustomInputValue('');
     };
 
@@ -116,44 +110,59 @@ const Quiz: React.FC<QuizProps> = ({ onBack }) => {
             );
         }
 
-        if (showCustomInput) {
+        if (customInputActive) {
             return (
-                <motion.div key="custom-input" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-                    <p className="text-lg font-semibold text-center mb-4">Hãy chia sẻ thêm về lựa chọn của bạn:</p>
+                <motion.div key="custom-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <p className="text-lg font-semibold text-center mb-4">{currentQuestion?.question}</p>
+                    <p className="text-sm text-slate-500 text-center mb-4">Hãy chia sẻ thêm về lựa chọn của bạn:</p>
                     <textarea
                         value={customInputValue}
                         onChange={(e) => setCustomInputValue(e.target.value)}
                         placeholder={UI_MESSAGES.QUIZ.OTHER_PLACEHOLDER}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         rows={3}
+                        autoFocus
                     />
-                    <div className="mt-6 text-center">
+                    <div className="mt-6 flex justify-center gap-4">
+                        <button onClick={() => setCustomInputActive(false)} className="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">
+                            Quay lại
+                        </button>
                         <button onClick={handleCustomSubmit} className="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">
-                            {UI_MESSAGES.QUIZ.BUTTON_SUBMIT}
+                            Gửi câu trả lời
                         </button>
                     </div>
                 </motion.div>
-            )
+            );
         }
 
-        return (
-            <AnimatePresence mode="wait">
-                <motion.div key={currentQuestionId} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-                    <p className="text-xl md:text-2xl font-semibold text-center text-slate-800 mb-8">{currentQuestion.question}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                        {currentQuestion.options.map((option, index) => (
+        if (currentQuestion) {
+            return (
+                <AnimatePresence mode="wait">
+                    <motion.div key={currentQuestion.question} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}>
+                        <p className="text-xl md:text-2xl font-semibold text-center text-slate-800 mb-8">{currentQuestion.question}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                            {currentQuestion.options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleSelectAnswer(option)}
+                                    className="p-4 bg-white rounded-lg shadow-md text-slate-700 font-medium text-left hover:bg-indigo-50 hover:shadow-lg transition-all transform hover:scale-105"
+                                >
+                                    {option}
+                                </button>
+                            ))}
                             <button
-                                key={index}
-                                onClick={() => handleOptionClick(option)}
-                                className="p-4 bg-white rounded-lg shadow-md text-slate-700 font-medium text-left hover:bg-indigo-50 hover:shadow-lg transition-all transform hover:scale-105"
+                                onClick={() => setCustomInputActive(true)}
+                                className="p-4 bg-white rounded-lg shadow-md text-slate-500 font-medium text-left hover:bg-gray-100 hover:shadow-lg transition-all transform hover:scale-105 md:col-span-2"
                             >
-                                {option.text}
+                                Khác...
                             </button>
-                        ))}
-                    </div>
-                </motion.div>
-            </AnimatePresence>
-        );
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            );
+        }
+
+        return null; // Should not happen if logic is correct
     };
 
     return (
@@ -161,7 +170,7 @@ const Quiz: React.FC<QuizProps> = ({ onBack }) => {
             <BackButton onClick={recommendations.length > 0 ? resetQuiz : onBack} />
             <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold">{UI_MESSAGES.QUIZ.TITLE}</h2>
-                <p className="mt-2 text-slate-600">{UI_MESSAGES.QUIZ.DESCRIPTION}</p>
+                <p className="mt-2 text-slate-600">{!recommendations.length > 0 && UI_MESSAGES.QUIZ.DESCRIPTION}</p>
             </div>
             {renderContent()}
         </div>
