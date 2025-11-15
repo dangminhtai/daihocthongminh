@@ -8,8 +8,9 @@ import ProfilePage from './pages/ProfilePage';
 import DocsPage from './pages/DocsPage';
 import RatingPage from './pages/RatingPage';
 import CVGeneratorPage from './pages/CVGeneratorPage';
-import SettingsPage from './pages/SettingsPage'; // Import trang mới
-import HistoryPage from './pages/HistoryPage';   // Import trang mới
+import SettingsPage from './pages/SettingsPage';
+import HistoryPage from './pages/HistoryPage';
+import AuthLayout from './layouts/AuthLayout'; // Import layout mới
 import './App.css';
 import { IUser } from './class/types';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -48,10 +49,13 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
-            <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
+            <Route
+              path="/register"
+              element={isLoggedIn ? <Navigate to="/home" /> : <AuthLayout><RegisterPage /></AuthLayout>}
+            />
             <Route
               path="/login"
-              element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleUserUpdate} />}
+              element={isLoggedIn ? <Navigate to="/home" /> : <AuthLayout><LoginPage onLoginSuccess={handleUserUpdate} /></AuthLayout>}
             />
             <Route
               path="/home"
