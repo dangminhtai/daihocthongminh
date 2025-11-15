@@ -1,4 +1,3 @@
-
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,7 +6,7 @@ import SocialButton from '../components/common/SocialButton';
 import { UserIcon, LockIcon, FacebookIcon, TwitterIcon, GoogleIcon } from '../components/icons';
 import { IUser } from '../class/types';
 import { Eye, EyeOff } from 'lucide-react';
-import InfoModal from '../components/common/InfoModal';
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 
 interface LoginPageProps {
     onLoginSuccess: (user: IUser) => void;
@@ -134,15 +133,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 </div>
             </motion.div>
 
-            <InfoModal
+            <ForgotPasswordModal
                 isOpen={isForgotModalOpen}
                 onClose={() => setIsForgotModalOpen(false)}
-                title="Tính năng đang phát triển"
-            >
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Chức năng khôi phục mật khẩu hiện đang được xây dựng. Nếu bạn cần hỗ trợ khẩn cấp, vui lòng liên hệ với chúng tôi qua email: <a href="mailto:support@daihocthongminh.vn" className="text-indigo-600 dark:text-indigo-400 hover:underline">support@daihocthongminh.vn</a>.
-                </p>
-            </InfoModal>
+            />
         </>
     );
 };

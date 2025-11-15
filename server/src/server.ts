@@ -34,6 +34,8 @@ app.use('/public', express.static(path.join(__dirname, '../../public')));
 // --- Kiểm tra các biến môi trường quan trọng ---
 const mongoURI = process.env.MONGO_URI;
 const jwtSecret = process.env.JWT_SECRET;
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
 
 if (!mongoURI) {
     console.error("FATAL ERROR: Biến môi trường MONGO_URI chưa được thiết lập.");
@@ -42,6 +44,10 @@ if (!mongoURI) {
 if (!jwtSecret) {
     console.error("FATAL ERROR: Biến môi trường JWT_SECRET chưa được thiết lập. Đây là nguyên nhân gây ra lỗi 401 Unauthorized.");
     process.exit(1);
+}
+if (!emailUser || !emailPass) {
+    console.warn("\nCẢNH BÁO: Các biến môi trường EMAIL_USER hoặc EMAIL_PASS chưa được thiết lập.");
+    console.warn("Chức năng gửi email (ví dụ: quên mật khẩu) sẽ không hoạt động và OTP sẽ được in ra console thay thế.\n");
 }
 // --- Kết thúc kiểm tra ---
 
