@@ -30,7 +30,7 @@ function App() {
           )}
 
           <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/" element={<Navigate to="/login" />} />
 
             <Route path="/register" element={<RegisterPage />} />
 

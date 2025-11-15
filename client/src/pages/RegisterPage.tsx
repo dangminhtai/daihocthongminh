@@ -1,46 +1,104 @@
+// RegisterPage.tsx
 import React, { useState, FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Input from '../components/common/Input';
+import { UserIcon, LockIcon, IdCardIcon } from '../components/Icons';
 
 const RegisterPage: React.FC = () => {
     const [fullName, setFullName] = useState('');
-    const [mssv, setMssv] = useState('');
     const [gmail, setGmail] = useState('');
+    const [mssv, setMssv] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError(null);
+        setSuccess(null);
+
         try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullName, mssv, gmail, password }),
             });
+
             const data = await response.json();
+
             if (!response.ok) {
                 throw new Error(data.message || 'Đăng ký thất bại');
             }
-            // Nếu đăng ký thành công, chuyển hướng đến trang đăng nhập
-            navigate('/login');
+
+            setSuccess('Đăng ký thành công! Chuyển sang đăng nhập...');
+            setTimeout(() => navigate('/login'), 1500);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Lỗi không xác định');
         }
     };
 
     return (
-        <div>
-            <h2>Đăng ký</h2>
-            <form onSubmit={handleSubmit} className="item-form">
-                <input type="text" placeholder="Họ và Tên" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-                <input type="text" placeholder="MSSV" value={mssv} onChange={(e) => setMssv(e.target.value)} required />
-                <input type="email" placeholder="Gmail" value={gmail} onChange={(e) => setGmail(e.target.value)} required />
-                <input type="password" placeholder="Mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <button type="submit">Đăng ký</button>
+        <div className="bg-white w-full max-w-md p-8 md:p-12 rounded-2xl shadow-2xl">
+            <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Sign Up</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <Input
+                    id="fullName"
+                    label="Full Name"
+                    type="text"
+                    placeholder="Type your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    icon={<UserIcon className="w-5 h-5" />}
+                />
+                <Input
+                    id="gmail"
+                    label="Email"
+                    type="email"
+                    placeholder="Type your email"
+                    value={gmail}
+                    onChange={(e) => setGmail(e.target.value)}
+                    icon={<UserIcon className="w-5 h-5" />}
+                />
+                <Input
+                    id="mssv"
+                    label="Student ID"
+                    type="text"
+                    placeholder="Type your student ID"
+                    value={mssv}
+                    onChange={(e) => setMssv(e.target.value)}
+                    icon={<IdCardIcon className="w-5 h-5" />}
+                />
+                <Input
+                    id="password"
+                    label="Password"
+                    type="password"
+                    placeholder="Type your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    icon={<LockIcon className="w-5 h-5" />}
+                />
+                <button
+                    type="submit"
+                    className="w-full text-white font-bold py-3 px-4 rounded-full bg-gradient-to-r from-sky-400 to-pink-500 hover:opacity-90 transition-opacity shadow-lg"
+                >
+                    SIGN UP
+                </button>
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {success && <p className="text-green-500 text-sm mt-2">{success}</p>}
             </form>
-            {error && <p className="error">{error}</p>}
-            <p>Đã có tài khoản? <Link to="/login">Đăng nhập ngay</Link></p>
+
+            <div className="mt-6 text-center">
+                <p className="text-sm text-gray-500">
+                    Already have an account?{' '}
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="font-semibold text-purple-600 hover:underline"
+                    >
+                        LOGIN
+                    </button>
+                </p>
+            </div>
         </div>
     );
 };
