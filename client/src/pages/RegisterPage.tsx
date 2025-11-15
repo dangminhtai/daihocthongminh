@@ -1,3 +1,4 @@
+
 // RegisterPage.tsx
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,8 +40,8 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-white w-full max-w-md p-8 md:p-12 rounded-2xl shadow-2xl">
-            <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Sign Up</h2>
+        <div className="bg-white dark:bg-slate-800 w-full max-w-md p-8 md:p-12 rounded-2xl shadow-2xl">
+            <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">Sign Up</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
                     id="fullName"
@@ -89,11 +90,11 @@ const RegisterPage: React.FC = () => {
             </form>
 
             <div className="mt-6 text-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                     Already have an account?{' '}
                     <button
                         onClick={() => navigate('/login')}
-                        className="font-semibold text-purple-600 hover:underline"
+                        className="font-semibold text-purple-600 hover:underline dark:text-purple-400"
                     >
                         LOGIN
                     </button>

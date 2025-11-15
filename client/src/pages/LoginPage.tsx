@@ -50,13 +50,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     return (
         <motion.div
-            className="bg-white w-full max-w-md p-8 md:p-12 rounded-2xl shadow-2xl"
+            className="bg-white dark:bg-slate-800 w-full max-w-md p-8 md:p-12 rounded-2xl shadow-2xl"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.3 }}
         >
-            <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">Login</h2>
+            <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">Login</h2>
             <form onSubmit={handleSubmit} className="space-y-8">
                 <Input
                     id="gmail"
@@ -77,7 +77,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     icon={<LockIcon className="w-5 h-5" />}
                 />
                 <div className="text-right">
-                    <a href="#" className="text-xs text-gray-500 hover:text-purple-600 transition-colors">
+                    <a href="#" className="text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                         Forgot password?
                     </a>
                 </div>
@@ -91,7 +91,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             </form>
 
             <div className="mt-10 text-center">
-                <p className="text-sm text-gray-500 mb-4">Or Sign In Using</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Or Sign In Using</p>
                 <div className="flex justify-center space-x-4">
                     <SocialButton bgColor="bg-blue-600" aria-label="Sign in with Facebook">
                         <FacebookIcon className="w-5 h-5" />
@@ -106,11 +106,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             </div>
 
             <div className="mt-10 text-center">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                     Don't have an account?{' '}
                     <button
                         onClick={() => navigate('/register')}
-                        className="font-semibold text-purple-600 hover:underline"
+                        className="font-semibold text-purple-600 hover:underline dark:text-purple-400"
                     >
                         SIGN UP
                     </button>

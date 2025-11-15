@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage'; // Import trang Profile
 import './App.css';
 import { IUser } from './class/types';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<IUser | null>(() => {
@@ -37,26 +38,28 @@ function App() {
   const isLoggedIn = !!currentUser;
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
-          <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
-          <Route
-            path="/login"
-            element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleUserUpdate} />}
-          />
-          <Route
-            path="/home"
-            element={isLoggedIn ? <HomePage onLogout={handleLogout} currentUser={currentUser} /> : <Navigate to="/login" />}
-          />
-          <Route
-            path="/profile"
-            element={isLoggedIn ? <ProfilePage currentUser={currentUser!} onUpdateUser={handleUserUpdate} onLogout={handleLogout} /> : <Navigate to="/login" />}
-          />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
+            <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
+            <Route
+              path="/login"
+              element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleUserUpdate} />}
+            />
+            <Route
+              path="/home"
+              element={isLoggedIn ? <HomePage onLogout={handleLogout} currentUser={currentUser} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/profile"
+              element={isLoggedIn ? <ProfilePage currentUser={currentUser!} onUpdateUser={handleUserUpdate} onLogout={handleLogout} /> : <Navigate to="/login" />}
+            />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

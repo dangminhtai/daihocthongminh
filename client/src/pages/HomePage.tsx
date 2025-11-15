@@ -39,14 +39,14 @@ const HomePage: React.FC<HomePageProps> = ({ onLogout, currentUser }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col">
             <Header onLogout={onLogout} currentUser={currentUser} />
             <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
                 <div className="max-w-5xl mx-auto">
                     {renderContent()}
                 </div>
             </main>
-            <footer className="text-center py-4 text-sm text-slate-500">
+            <footer className="text-center py-4 text-sm text-slate-500 dark:text-slate-400">
                 <p>{UI_MESSAGES.FOOTER.COPYRIGHT}</p>
             </footer>
             <ChatBot />

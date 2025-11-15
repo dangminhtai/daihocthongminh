@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChatService, ChatMessage } from '../services/chatService';
 import { ERROR_MESSAGES } from '../config/errors';
@@ -121,7 +122,7 @@ const ChatBot: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
+      <div className="fixed bottom-6 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white dark:bg-slate-800 rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200 dark:border-slate-700">
         <div className="bg-indigo-600 text-white p-4 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
@@ -137,17 +138,17 @@ const ChatBot: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-slate-900">
           {messages.length === 0 && !isLoading && !error && (
-            <div className="text-center text-gray-500 mt-8 flex flex-col items-center">
-              <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-8 flex flex-col items-center">
+              <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
               <p>Chào bạn! Tôi có thể giúp gì cho bạn về định hướng nghề nghiệp?</p>
             </div>
           )}
 
           {messages.map((msg, index) => (
             <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}`}>
+              <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-slate-600'}`}>
                 <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
               </div>
             </div>
@@ -155,7 +156,7 @@ const ChatBot: React.FC = () => {
 
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white rounded-lg p-3 border border-gray-200">
+              <div className="bg-white dark:bg-slate-700 rounded-lg p-3 border border-gray-200 dark:border-slate-600">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
                   <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
@@ -169,9 +170,9 @@ const ChatBot: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 border-t border-gray-200 bg-white rounded-b-lg">
+        <div className="p-4 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-b-lg">
           <div className="flex gap-2">
-            <input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Nhập câu hỏi của bạn..." className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled={isLoading} />
+            <input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Nhập câu hỏi của bạn..." className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent dark:text-white" disabled={isLoading} />
             <button onClick={handleSend} disabled={!input.trim() || isLoading} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center w-12">
               {isLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <Send className="h-5 w-5" />}
             </button>
