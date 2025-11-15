@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { IUser } from '../class/types';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { User, Mail, CreditCard, Camera, Upload, Edit, X, Save, Building, Users, Calendar, Phone, FileText, History, Settings, Sun, Moon, Laptop } from 'lucide-react';
+import { User, Mail, CreditCard, Camera, Upload, Edit, X, Save, Building, Users, Calendar, Phone, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { updateProfile, updateAvatar } from '../services/userService';
 import AvatarCameraModal from '../components/AvatarCameraModal';
-import { useTheme, Theme } from '../contexts/ThemeContext';
 
 interface ProfilePageProps {
     currentUser: IUser;
@@ -34,7 +33,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onUpdateUser, on
     const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
-    const { theme, setTheme } = useTheme();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -121,33 +119,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onUpdateUser, on
         </div>
     );
 
-    const ThemeToggle = () => {
-        const options: { name: Theme; icon: React.ReactNode }[] = [
-            { name: 'light', icon: <Sun className="w-5 h-5" /> },
-            { name: 'dark', icon: <Moon className="w-5 h-5" /> },
-            { name: 'system', icon: <Laptop className="w-5 h-5" /> },
-        ];
-        return (
-            <div className="flex justify-between items-center">
-                <label className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
-                    <Sun className="w-4 h-4 text-gray-500" /> Giao diện
-                </label>
-                <div className="flex items-center p-1 space-x-1 bg-gray-200 dark:bg-slate-700 rounded-lg">
-                    {options.map(option => (
-                        <button
-                            key={option.name}
-                            onClick={() => setTheme(option.name)}
-                            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${theme === option.name ? 'bg-white dark:bg-slate-900 shadow' : 'hover:bg-gray-300/50 dark:hover:bg-slate-600/50'}`}
-                            aria-label={`Set theme to ${option.name}`}
-                        >
-                            {option.icon}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col">
             <Header onLogout={onLogout} currentUser={currentUser} />
@@ -217,20 +188,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onUpdateUser, on
                                     </div>
                                 )}
                             </form>
-                        </motion.div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-8 mt-8">
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md">
-                            <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-4 flex items-center"><History className="w-5 h-5 mr-2 text-indigo-500 dark:text-indigo-400" /> Lịch sử khám phá</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Tính năng đang được phát triển. Lịch sử các lần làm trắc nghiệm và khám phá của bạn sẽ được hiển thị tại đây.</p>
-                        </motion.div>
-
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md">
-                            <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-6 flex items-center"><Settings className="w-5 h-5 mr-2 text-indigo-500 dark:text-indigo-400" /> Cài đặt</h2>
-                            <div className="space-y-6">
-                                <ThemeToggle />
-                            </div>
                         </motion.div>
                     </div>
                 </div>

@@ -15,6 +15,7 @@ import settingsRoutes from './routes/settings.routes'; // Import route cài đ�
 import ratingRoutes from './routes/rating.routes'; // Import route đánh giá mới
 import cvRoutes from './routes/cv.routes'; // Import route CV mới
 import cvTemplateRoutes from './routes/cvTemplate.routes'; // Import route template CV mới
+import historyRoutes from './routes/history.routes'; // Import route lịch sử mới
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use('/api/settings', settingsRoutes); // Sử dụng route cài đặt
 app.use('/api/ratings', ratingRoutes); // Sử dụng route đánh giá mới
 app.use('/api/cv', cvRoutes); // Sử dụng route CV mới
 app.use('/api/cv-templates', cvTemplateRoutes); // Sử dụng route template CV
+app.use('/api/history', historyRoutes); // Sử dụng route lịch sử
 
 
 app.listen(port, () => {

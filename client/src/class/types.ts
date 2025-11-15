@@ -141,3 +141,22 @@ export interface CVData {
   skills: CVSkill[];
   projects: CVProject[];
 }
+
+// --- Thêm các interface để export ---
+
+export interface IExploration {
+  _id: string;
+  userId: string;
+  type: 'roadmap' | 'subjects';
+  input: Record<string, any>;
+  results: any[];
+  createdAt: string;
+}
+
+export interface IQuizResult {
+  _id: string;
+  userId: string;
+  history: QuizTurn[];
+  recommendations: QuizRecommendation[];
+  createdAt: string;
+}

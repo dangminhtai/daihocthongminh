@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User, Settings, History } from 'lucide-react';
 import { IUser } from '../class/types';
 import { Link } from 'react-router-dom';
 
@@ -86,8 +86,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
                             </div>
                         </div>
                         <div className="p-2 space-y-1">
-                            <Link to="/profile" className="block">
+                            <Link to="/profile" className="block" onClick={() => setIsOpen(false)}>
                                 <MenuItem icon={<User className="w-4 h-4 text-gray-500 dark:text-gray-400" />} text="Hồ sơ của bạn" />
+                            </Link>
+                            <Link to="/settings" className="block" onClick={() => setIsOpen(false)}>
+                                <MenuItem icon={<Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />} text="Cài đặt" />
+                            </Link>
+                            <Link to="/history" className="block" onClick={() => setIsOpen(false)}>
+                                <MenuItem icon={<History className="w-4 h-4 text-gray-500 dark:text-gray-400" />} text="Lịch sử khám phá" />
                             </Link>
                         </div>
                         <div className="border-t border-gray-100 dark:border-slate-700 my-1"></div>
@@ -95,7 +101,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
                             <MenuItem
                                 icon={<LogOut className="w-4 h-4 text-red-500" />}
                                 text="Đăng xuất"
-                                onClick={onLogout}
+                                onClick={() => { onLogout(); setIsOpen(false); }}
                                 className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                             />
                         </div>
