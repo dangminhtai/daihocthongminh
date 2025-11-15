@@ -1,3 +1,4 @@
+
 import express from 'express';
 import { protect } from '../middleware/auth.middleware';
 import Exploration from '../models/exploration.model';
@@ -5,7 +6,8 @@ import { EXPLORATION_TYPES } from '../models/constants';
 import {
     suggestMajorsForRoadmap,
     suggestCareersForSubjects,
-    getMajorDetails
+    getMajorDetails,
+    findSchoolsNearLocation
 } from '../services/explorationAi.service';
 
 const router = express.Router();
@@ -66,6 +68,21 @@ router.post('/major-details', protect, async (req, res) => {
         res.status(200).json(details);
     } catch (error: any) {
         res.status(500).json({ message: error.message || "Lỗi server" });
+    }
+});
+
+// Tìm trường học lân cận
+router.post('/find-schools', protect, async (req, res) => {
+    const { schoolType, location } = req.body;
+    if (!schoolType || !location || !location.latitude || !location.longitude) {
+        return res.status(400).json({ message: 'Thiếu thông tin loại trường hoặc vị trí.' });
+    }
+
+    try {
+        const schools = await findSchoolsNearLocation(schoolType, location);
+        res.status(200).json(schools);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message || "Lỗi server khi tìm trường học." });
     }
 });
 

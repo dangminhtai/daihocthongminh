@@ -1,5 +1,6 @@
+
 import apiClient from './apiClient';
-import { MajorSuggestion, CareerSuggestion, MajorDetails, QuizRecommendation, QuizTurn, NextQuizStep } from '../class/types';
+import { MajorSuggestion, CareerSuggestion, MajorDetails, QuizRecommendation, QuizTurn, NextQuizStep, School } from '../class/types';
 
 /**
  * Gợi ý chuyên ngành dựa trên lộ trình học tập
@@ -20,6 +21,13 @@ export const suggestCareersForSubjects = (subjectNames: string[]): Promise<Caree
  */
 export const getMajorDetails = (majorName: string): Promise<MajorDetails> => {
   return apiClient.post<MajorDetails>('/api/exploration/major-details', { majorName });
+};
+
+/**
+ * Tìm các trường học gần một vị trí cụ thể
+ */
+export const findNearbySchools = (schoolType: string, location: { latitude: number; longitude: number }): Promise<School[]> => {
+  return apiClient.post<School[]>('/api/exploration/find-schools', { schoolType, location });
 };
 
 /**

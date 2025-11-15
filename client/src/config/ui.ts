@@ -31,6 +31,21 @@ export const UI_MESSAGES = {
     RESULT_DESCRIPTION: "Dựa trên các câu trả lời của bạn, đây là những định hướng nghề nghiệp mà AI cho rằng phù hợp nhất:",
   },
 
+  // University Explorer
+  UNIVERSITY_EXPLORER: {
+    TITLE: "Khám phá Trường học",
+    DESCRIPTION: "Sử dụng vị trí của bạn để tìm các trường đại học, cấp 3, hoặc cấp 2 chất lượng ở gần.",
+    FIND_BUTTON: "Tìm trường học gần đây",
+    REQUESTING_LOCATION: "Đang yêu cầu quyền truy cập vị trí...",
+    LOCATION_DENIED: "Bạn đã từ chối quyền truy cập vị trí. Vui lòng cấp quyền trong cài đặt trình duyệt để sử dụng tính năng này.",
+    SCHOOL_TYPE_UNIVERSITY: "Đại học",
+    SCHOOL_TYPE_HIGH_SCHOOL: "Cấp 3",
+    SCHOOL_TYPE_MIDDLE_SCHOOL: "Cấp 2",
+    STRENGTHS: "Điểm mạnh",
+    WEAKNESSES: "Điểm yếu",
+    VIEW_ON_MAP: "Xem trên bản đồ",
+  },
+
   // Home
   HOME: {
     QUIZ_TITLE: "Trắc nghiệm AI Khám phá",
@@ -39,7 +54,7 @@ export const UI_MESSAGES = {
     ROADMAP_DESCRIPTION: "Duyệt qua các khối ngành lớn như Công nghệ, Kinh doanh, Nghệ thuật...",
     SUBJECTS_TITLE: "Tìm theo Môn học",
     SUBJECTS_DESCRIPTION: "Đã biết mình học tốt môn nào? Để AI gợi ý nghề nghiệp từ đó.",
-    UNIVERSITY_EXPLORER_TITLE: "Khám phá Trường Đại học",
+    UNIVERSITY_EXPLORER_TITLE: "Khám phá Trường học",
     UNIVERSITY_EXPLORER_DESCRIPTION: "Tìm kiếm, so sánh các trường đại học và ngành học phù hợp với bạn.",
   },
 

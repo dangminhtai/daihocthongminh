@@ -161,3 +161,10 @@ export interface IQuizResult {
   recommendations: QuizRecommendation[];
   createdAt: string;
 }
+export interface School {
+  name: string;
+  address: string;
+  strengths: string[];
+  weaknesses: string[];
+  uri: string;
+}

@@ -2,6 +2,7 @@
     "name": "Đại học Thông minh - Trợ lý định hướng AI",
     "description": "Một ứng dụng web sử dụng AI để giúp sinh viên lựa chọn chuyên ngành dựa trên lộ trình học tập hoặc định hướng nghề nghiệp dựa trên các môn học yêu thích. Được thiết kế để trao quyền cho sinh viên đưa ra quyết định sáng suốt về tương lai học tập và sự nghiệp.",
     "requestFramePermissions": [
-        "camera"
+        "camera",
+        "geolocation"
     ]
 }
