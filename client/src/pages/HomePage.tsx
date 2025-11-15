@@ -1,103 +1,44 @@
-import React, { useState, useEffect, FormEvent } from 'react';
 
-interface Item {
-    _id: string;
-    name: string;
-    description: string;
-}
+import React, { useState, useCallback } from 'react';
+import Home from '../components/Home';
+import RoadmapSelector from '../components/RoadmapSelector';
+import CareerPathfinder from '../components/CareerPathfinder';
+import Header from '../components/Header';
+import ChatBot from '../components/ChatBot';
+import { View } from '../class/types';
+import { UI_MESSAGES } from '../config/ui';
 
 const HomePage: React.FC = () => {
-    const [items, setItems] = useState<Item[]>([]);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [welcomeMessage, setWelcomeMessage] = useState('');
+    const [currentView, setCurrentView] = useState<View>('home');
 
-    const fetchItems = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/items');
-            if (!response.ok) throw new Error('Lỗi khi tải items');
-            const data: Item[] = await response.json();
-            setItems(data);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Lỗi không xác định');
-        }
-    };
-
-    const fetchHomeData = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/auth/home');
-            if (!response.ok) throw new Error('Lỗi khi tải dữ liệu home');
-            const data = await response.json();
-            setWelcomeMessage(data.message);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Lỗi không xác định');
-        }
-    }
-
-    useEffect(() => {
-        const loadData = async () => {
-            setLoading(true);
-            await fetchHomeData();
-            await fetchItems();
-            setLoading(false);
-        }
-        loadData();
+    const navigateTo = useCallback((view: View) => {
+        setCurrentView(view);
     }, []);
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://localhost:5000/api/items', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, description }),
-            });
-            if (!response.ok) throw new Error('Không thể tạo item');
-            setName('');
-            setDescription('');
-            fetchItems();
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Lỗi khi gửi dữ liệu');
+    const renderContent = () => {
+        switch (currentView) {
+            case 'roadmap':
+                return <RoadmapSelector onBack={() => navigateTo('home')} />;
+            case 'careerPath':
+                return <CareerPathfinder onBack={() => navigateTo('home')} />;
+            case 'home':
+            default:
+                return <Home onNavigate={navigateTo} />;
         }
     };
 
-    if (loading) return <p>Đang tải...</p>;
-
     return (
-        <div>
-            <h1>Trang Chủ</h1>
-            {error && <p className="error">{error}</p>}
-            <p style={{ color: 'lime' }}>{welcomeMessage}</p>
-
-            <hr />
-
-            <h2>Thêm Item Mới</h2>
-            <form onSubmit={handleSubmit} className="item-form">
-                <input
-                    type="text"
-                    placeholder="Tên item"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Mô tả"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-                <button type="submit">Thêm</button>
-            </form>
-
-            <h2>Danh sách Items</h2>
-            <ul className="item-list">
-                {items.map((item) => (
-                    <li key={item._id}>
-                        <strong>{item.name}:</strong> {item.description}
-                    </li>
-                ))}
-            </ul>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
+                <div className="max-w-4xl mx-auto">
+                    {renderContent()}
+                </div>
+            </main>
+            <footer className="text-center py-4 text-sm text-slate-500">
+                <p>{UI_MESSAGES.FOOTER.COPYRIGHT}</p>
+            </footer>
+            <ChatBot />
         </div>
     );
 };
