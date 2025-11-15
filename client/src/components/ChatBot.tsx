@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChatService, ChatMessage } from '../services/chatService';
+import { ChatService } from '../services/chatService';
+import { ChatMessage } from '../class/types';
 import { ERROR_MESSAGES } from '../config/errors';
 import LoadingSpinner from './common/LoadingSpinner';
-import ConfirmModal from './common/ConfirmModal'; // Import component mới
-import { Send, X, MessageCircle, Trash2 } from 'lucide-react';
+import ConfirmModal from './common/ConfirmModal';
+import { Send, X, MessageCircle, Trash2, Search } from 'lucide-react';
 
 const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -11,11 +12,12 @@ const ChatBot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State cho modal
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [useGoogleSearch, setUseGoogleSearch] = useState(false); // State cho Google Search
   const hasFetchedHistory = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  
   const channelId = 'career-guidance';
 
   useEffect(() => {
@@ -60,23 +62,21 @@ const ChatBot: React.FC = () => {
     setError(null);
 
     try {
-      const response = await ChatService.sendMessage(channelId, currentInput);
+      const response = await ChatService.sendMessage(channelId, currentInput, useGoogleSearch);
       const modelMessage: ChatMessage = { text: response, role: 'model', timestamp: new Date() };
-      // Cập nhật lại state sau khi nhận được phản hồi
       setMessages(prev => [...prev.filter(m => m !== userMessage), userMessage, modelMessage]);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
       setError(errorMessage);
-      // Giữ lại tin nhắn của người dùng trên UI để họ có thể thử lại
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
     }
-  }, [input, isLoading, channelId]);
+  }, [input, isLoading, channelId, useGoogleSearch]);
 
   const handleClear = () => {
-    setIsConfirmModalOpen(true); // Mở modal xác nhận tùy chỉnh
+    setIsConfirmModalOpen(true);
   };
 
   const handleConfirmClear = async () => {
@@ -96,14 +96,13 @@ const ChatBot: React.FC = () => {
       handleSend();
     }
   };
-
+  
   const handleToggleOpen = () => {
-    const nextIsOpen = !isOpen;
-    setIsOpen(nextIsOpen);
-    if (!nextIsOpen) {
-      // Reset history fetch flag when closing
-      hasFetchedHistory.current = false;
-    }
+      const nextIsOpen = !isOpen;
+      setIsOpen(nextIsOpen);
+      if(!nextIsOpen) {
+          hasFetchedHistory.current = false;
+      }
   }
 
 
@@ -128,6 +127,14 @@ const ChatBot: React.FC = () => {
             <h3 className="font-semibold">Trợ lý AI định hướng</h3>
           </div>
           <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setUseGoogleSearch(!useGoogleSearch)} 
+              className={`p-1 rounded transition-colors ${useGoogleSearch ? 'bg-white/30' : 'hover:bg-indigo-700'}`} 
+              aria-label="Bật/Tắt Google Search" 
+              title="Sử dụng Google Search để có thông tin mới nhất"
+            >
+              <Search className={`h-4 w-4 ${useGoogleSearch ? 'text-yellow-300' : 'text-white'}`} />
+            </button>
             <button onClick={handleClear} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Xóa lịch sử" title="Xóa lịch sử">
               <Trash2 className="h-4 w-4" />
             </button>
@@ -165,7 +172,7 @@ const ChatBot: React.FC = () => {
             </div>
           )}
 
-          {error && (<div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div>)}
+          {error && ( <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div> )}
           <div ref={messagesEndRef} />
         </div>
 

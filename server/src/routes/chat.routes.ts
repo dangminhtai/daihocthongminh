@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Gửi tin nhắn mới
 router.post('/', protect, async (req, res) => {
-    const { channelId, message } = req.body;
+    const { channelId, message, useGoogleSearch } = req.body;
     const userId = req.user!._id;
 
     if (!channelId || !message) {
@@ -17,22 +17,24 @@ router.post('/', protect, async (req, res) => {
     try {
         let chat = await ChatHistory.findOne({ userId, channelId });
         if (!chat) {
-            chat = new ChatHistory({ userId, channelId, messages: [] });
+            chat = new ChatHistory({ userId, channelId, turns: [] });
         }
+        
+        // Lấy lịch sử 'turns' để làm ngữ cảnh
+        const history = chat.turns;
 
-        // Lấy lịch sử để làm ngữ cảnh
-        const history = chat.messages.map(msg => ({
-            role: msg.role,
-            parts: [{ text: msg.text }]
-        }));
+        const responseText = await getChatResponse(history, message, useGoogleSearch);
 
-        const responseText = await getChatResponse(history, message);
-
-        chat.messages.push({ role: 'user', text: message, timestamp: new Date() });
-        chat.messages.push({ role: 'model', text: responseText, timestamp: new Date() });
+        // Tạo một lượt mới và thêm vào lịch sử
+        const newTurn = {
+            user: { parts: [{ text: message }] },
+            model: { parts: [{ text: responseText }] },
+            createdAt: new Date(),
+        };
+        chat.turns.push(newTurn);
 
         await chat.save();
-
+        
         res.status(200).json({ response: responseText });
     } catch (error) {
         console.error("Lỗi khi gửi tin nhắn:", error);
@@ -48,7 +50,7 @@ router.get('/history/:channelId', protect, async (req, res) => {
     try {
         const chat = await ChatHistory.findOne({ userId, channelId });
         if (chat) {
-            res.status(200).json(chat.messages);
+            res.status(200).json(chat.turns);
         } else {
             res.status(200).json([]); // Trả về mảng rỗng nếu chưa có lịch sử
         }

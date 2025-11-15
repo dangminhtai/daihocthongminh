@@ -1,31 +1,56 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
-import { IUser } from './user.model';
+import mongoose, { Document, Schema, Model } from "mongoose";
+import { IUser } from "./user.model";
 
-interface IMessage {
-    role: 'user' | 'model';
-    text: string;
-    timestamp: Date;
+interface IMessagePart {
+    text?: string;
+    fileData?: {
+        mimeType?: string;
+        fileUri?: string;
+    };
+}
+
+interface IChatTurn {
+    user: {
+        parts: IMessagePart[];
+    };
+    model: {
+        parts: IMessagePart[];
+    };
+    createdAt?: Date;
 }
 
 export interface IChatHistory extends Document {
-    userId: Types.ObjectId | IUser;
+    userId: IUser['_id'];
     channelId: string;
-    messages: IMessage[];
+    turns: IChatTurn[];
 }
 
-const MessageSchema: Schema = new Schema({
-    role: { type: String, enum: ['user', 'model'], required: true },
-    text: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now },
+const messagePartSchema = new Schema<IMessagePart>({
+    text: { type: String },
+    fileData: {
+        mimeType: { type: String },
+        fileUri: { type: String },
+    },
 }, { _id: false });
 
-const ChatHistorySchema: Schema = new Schema({
+const chatTurnSchema = new Schema<IChatTurn>({
+    user: {
+        parts: [messagePartSchema],
+    },
+    model: {
+        parts: [messagePartSchema],
+    },
+    createdAt: { type: Date, default: Date.now },
+}, { _id: false });
+
+const chatSchema = new Schema<IChatHistory>({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    channelId: { type: String, required: true, index: true },
-    messages: [MessageSchema],
-}, { timestamps: true });
+    channelId: { type: String, required: true },
+    turns: [chatTurnSchema],
+});
 
-// Tạo một compound index để tối ưu việc truy vấn
-ChatHistorySchema.index({ userId: 1, channelId: 1 }, { unique: true });
+chatSchema.index({ userId: 1, channelId: 1 });
 
-export default mongoose.model<IChatHistory>('ChatHistory', ChatHistorySchema);
+const ChatHistory: Model<IChatHistory> = mongoose.model<IChatHistory>("ChatHistory", chatSchema);
+
+export default ChatHistory;
