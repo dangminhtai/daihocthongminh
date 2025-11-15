@@ -2,12 +2,15 @@
 import { Schema, model, Document, Types } from "mongoose";
 import { ILogin } from "./login.model";
 
+export type UserRole = 'student' | 'high_school_student';
+
 export interface IUser extends Document {
     loginID: Types.ObjectId | ILogin;
     fullName: string;
     mssv?: string;
     userId: string;
     avatarUrl: string;
+    role: UserRole;
     department?: string; // Khoa
     class?: string; // Lớp
     dateOfBirth?: Date; // Ngày sinh
@@ -22,6 +25,7 @@ const UserSchema = new Schema<IUser>(
         mssv: { type: String },
         userId: { type: String, required: true, unique: true },
         avatarUrl: { type: String, required: true },
+        role: { type: String, enum: ['student', 'high_school_student'], required: true },
         department: { type: String, required: false },
         class: { type: String, required: false },
         dateOfBirth: { type: Date, required: false },

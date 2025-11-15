@@ -11,22 +11,46 @@ const router = express.Router();
 // Endpoint: POST /api/auth/register
 router.post('/register', async (req: Request, res: Response) => {
     try {
-        const { fullName, mssv, gmail, password } = req.body;
-        if (!fullName || !mssv || !gmail || !password) {
-            return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin.' });
+        const { fullName, mssv, gmail, password, role } = req.body;
+
+        if (!fullName || !gmail || !password || !role) {
+            return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin bắt buộc.' });
         }
-        const existingLogin = await Login.findOne({ $or: [{ gmail }, { mssv }] });
+        if (role === 'student' && !mssv) {
+            return res.status(400).json({ message: 'Vui lòng cung cấp Mã số sinh viên.' });
+        }
+        if (!['student', 'high_school_student'].includes(role)) {
+            return res.status(400).json({ message: 'Vai trò không hợp lệ.' });
+        }
+
+        const orQuery: any[] = [{ gmail }];
+        if (role === 'student' && mssv) {
+            orQuery.push({ mssv });
+        }
+        const existingLogin = await Login.findOne({ $or: orQuery });
+
         if (existingLogin) {
-            return res.status(409).json({ message: 'Gmail hoặc MSSV đã tồn tại.' });
+            const message = existingLogin.gmail === gmail ? 'Gmail đã tồn tại.' : 'MSSV đã tồn tại.';
+            return res.status(409).json({ message });
         }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newLogin = new Login({ gmail, mssv, password: hashedPassword });
+        const newLogin = new Login({ gmail, mssv: role === 'student' ? mssv : undefined, password: hashedPassword });
         const savedLogin = await newLogin.save();
+
         const userId = await generateUniqueUserId();
         const avatarUrl = generateDefaultAvatar(fullName);
-        const newUser = new User({ loginID: savedLogin._id, fullName, mssv, userId, avatarUrl });
+        const newUser = new User({
+            loginID: savedLogin._id,
+            fullName,
+            mssv: role === 'student' ? mssv : undefined,
+            userId,
+            avatarUrl,
+            role
+        });
         await newUser.save();
+
         res.status(201).json({ message: 'Đăng ký thành công!' });
     } catch (error) {
         console.error(error);
@@ -55,7 +79,14 @@ router.post('/login', async (req: Request, res: Response) => {
         }
         const payload = { id: user._id };
         const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '7d' });
-        const userResponse = { _id: user._id, fullName: user.fullName, mssv: user.mssv, userId: user.userId, avatarUrl: user.avatarUrl };
+        const userResponse = {
+            _id: user._id,
+            fullName: user.fullName,
+            mssv: user.mssv,
+            userId: user.userId,
+            avatarUrl: user.avatarUrl,
+            role: user.role
+        };
         res.status(200).json({ message: 'Đăng nhập thành công!', token, user: userResponse });
     } catch (error) {
         console.error(error);
@@ -69,23 +100,19 @@ router.post('/forgot-password', async (req, res) => {
     try {
         const login = await Login.findOne({ gmail });
 
-        // Để tránh bị dò quét email, luôn trả về thông báo thành công.
-        // Việc gửi email chỉ thực hiện nếu tìm thấy tài khoản.
         if (login) {
             const otp = generateOTP();
             login.passwordResetToken = otp;
             login.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 phút
             await login.save();
 
-            // Gửi email chứa mã OTP
             await sendPasswordResetEmail(login.gmail, otp);
         }
 
         res.status(200).json({ message: 'Nếu tài khoản của bạn tồn tại trong hệ thống, một email đặt lại mật khẩu đã được gửi.' });
     } catch (error) {
         console.error("Lỗi trong quá trình quên mật khẩu:", error);
-        // Trả về một lỗi chung để không tiết lộ thông tin nội bộ
-        res.status(500).json({ message: 'Đã có lỗi xảy ra phía máy chủ.' });
+        res.status(500).json({ message: error instanceof Error ? error.message : 'Đã có lỗi xảy ra phía máy chủ.' });
     }
 });
 

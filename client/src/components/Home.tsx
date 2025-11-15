@@ -1,15 +1,16 @@
 import React from 'react';
-import { View } from '../class/types';
+import { View, IUser } from '../class/types';
 import { UI_MESSAGES } from '../config/ui';
-import { Map, Compass, Rocket } from 'lucide-react';
+import { Map, Compass, Rocket, Building2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DidYouKnow from './common/DidYouKnow';
 
 interface HomeProps {
   onNavigate: (view: View, payload?: any) => void;
+  currentUser: IUser | null;
 }
 
-const Home: React.FC<HomeProps> = ({ onNavigate }) => {
+const Home: React.FC<HomeProps> = ({ onNavigate, currentUser }) => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -34,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Chào mừng đến với <span className="text-indigo-600 dark:text-indigo-400">Đại học Thông minh</span>
+          Chào mừng, <span className="text-indigo-600 dark:text-indigo-400">{currentUser?.fullName || 'bạn'}!</span>
         </motion.h1>
         <motion.p
           className="max-w-3xl mx-auto text-lg text-slate-600 dark:text-slate-300"
@@ -71,9 +72,26 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           </div>
         </motion.div>
 
-        {/* Card 2: Did you know */}
+        {/* Card 2: Conditional Card */}
         <motion.div custom={1} variants={cardVariants} initial="hidden" animate="visible">
-          <DidYouKnow />
+          {currentUser?.role === 'high_school_student' ? (
+            <div
+              onClick={() => onNavigate('university')}
+              className="bg-teal-50 dark:bg-slate-800 border-l-4 border-teal-400 dark:border-teal-600 p-6 rounded-lg shadow-md flex flex-col justify-between h-full cursor-pointer hover:scale-105 transition-transform"
+            >
+              <div>
+                <div className="flex items-center mb-3">
+                  <Building2 className="h-6 w-6 text-teal-500 dark:text-teal-400 mr-3" />
+                  <h4 className="font-bold text-lg text-teal-800 dark:text-teal-300">{UI_MESSAGES.HOME.UNIVERSITY_EXPLORER_TITLE}</h4>
+                </div>
+                <p className="text-sm text-slate-700 dark:text-slate-300">
+                  {UI_MESSAGES.HOME.UNIVERSITY_EXPLORER_DESCRIPTION}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <DidYouKnow />
+          )}
         </motion.div>
       </div>
 

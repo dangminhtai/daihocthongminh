@@ -2,7 +2,7 @@ import { Schema, model, Document } from "mongoose";
 
 export interface ILogin extends Document {
     gmail: string;
-    mssv: string;
+    mssv?: string;
     password: string;
     passwordResetToken?: string;
     passwordResetExpires?: Date;
@@ -11,7 +11,7 @@ export interface ILogin extends Document {
 const LoginSchema = new Schema<ILogin>(
     {
         gmail: { type: String, required: true, unique: true },
-        mssv: { type: String, required: true, unique: true },
+        mssv: { type: String, unique: true, sparse: true },
         password: { type: String, required: true },
         passwordResetToken: { type: String },
         passwordResetExpires: { type: Date },

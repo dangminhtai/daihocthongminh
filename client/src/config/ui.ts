@@ -39,6 +39,8 @@ export const UI_MESSAGES = {
     ROADMAP_DESCRIPTION: "Duyệt qua các khối ngành lớn như Công nghệ, Kinh doanh, Nghệ thuật...",
     SUBJECTS_TITLE: "Tìm theo Môn học",
     SUBJECTS_DESCRIPTION: "Đã biết mình học tốt môn nào? Để AI gợi ý nghề nghiệp từ đó.",
+    UNIVERSITY_EXPLORER_TITLE: "Khám phá Trường Đại học",
+    UNIVERSITY_EXPLORER_DESCRIPTION: "Tìm kiếm, so sánh các trường đại học và ngành học phù hợp với bạn.",
   },
 
   // Header

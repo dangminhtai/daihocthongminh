@@ -8,6 +8,7 @@ import Header from '../components/Header';
 import ChatBot from '../components/ChatBot';
 import Footer from '../components/Footer';
 import { View, IUser } from '../class/types';
+import UniversityExplorer from '../components/UniversityExplorer';
 
 interface HomePageProps {
     onLogout: () => void;
@@ -32,9 +33,11 @@ const HomePage: React.FC<HomePageProps> = ({ onLogout, currentUser }) => {
                 return <CareerPathfinder onBack={() => navigateTo('home')} />;
             case 'quiz': // Thêm case cho quiz
                 return <Quiz onBack={() => navigateTo('home')} />;
+            case 'university':
+                return <UniversityExplorer onBack={() => navigateTo('home')} />;
             case 'home':
             default:
-                return <Home onNavigate={navigateTo} />;
+                return <Home onNavigate={navigateTo} currentUser={currentUser} />;
         }
     };
 

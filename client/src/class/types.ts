@@ -1,7 +1,7 @@
 
 import type { ElementType } from 'react';
 
-export type View = 'home' | 'roadmap' | 'careerPath' | 'quiz';
+export type View = 'home' | 'roadmap' | 'careerPath' | 'quiz' | 'university';
 
 export interface Roadmap {
   id: string;
@@ -64,6 +64,7 @@ export interface IUser {
   fullName: string;
   userId: string;
   avatarUrl: string;
+  role: 'student' | 'high_school_student';
   mssv?: string;
   department?: string; // Khoa
   class?: string; // Lớp
