@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IUser } from '../class/types';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { User, Mail, CreditCard, Camera, Upload, Edit, X, Save, Building, Users, Calendar, Phone, FileText, History, Settings, Sun, Moon, Laptop } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { updateProfile, updateAvatar } from '../services/userService';
@@ -234,6 +235,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, onUpdateUser, on
                     </div>
                 </div>
             </main>
+            <Footer />
             <AvatarCameraModal isOpen={isCameraModalOpen} onClose={() => setIsCameraModalOpen(false)} onCapture={handleAvatarUpload} />
         </div>
     );

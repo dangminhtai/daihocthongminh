@@ -1,3 +1,4 @@
+
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -10,6 +11,9 @@ import quizRoutes from './routes/quiz.routes';
 import explorationRoutes from './routes/exploration.routes';
 import chatRoutes from './routes/chat.routes';
 import userRoutes from './routes/user.routes'; // Import route người dùng mới
+import settingsRoutes from './routes/settings.routes'; // Import route cài đặt mới
+import ratingRoutes from './routes/rating.routes'; // Import route đánh giá mới
+import cvRoutes from './routes/cv.routes'; // Import route CV mới
 
 dotenv.config();
 
@@ -53,6 +57,9 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/exploration', explorationRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/users', userRoutes); // Sử dụng route người dùng
+app.use('/api/settings', settingsRoutes); // Sử dụng route cài đặt
+app.use('/api/ratings', ratingRoutes); // Sử dụng route đánh giá mới
+app.use('/api/cv', cvRoutes); // Sử dụng route CV mới
 
 
 app.listen(port, () => {

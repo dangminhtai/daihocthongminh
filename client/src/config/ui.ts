@@ -52,6 +52,22 @@ export const UI_MESSAGES = {
     COPYRIGHT: "© 2024 Đại học Thông minh. Phát triển bởi chuyên gia AI.",
   },
 
+  // CV Generator
+  CV_GENERATOR: {
+    TITLE: "Trình tạo CV bằng AI",
+    DESCRIPTION: "Xây dựng một bản CV chuyên nghiệp, nổi bật chỉ trong vài phút với sự trợ giúp của AI.",
+    PREVIEW_TITLE: "Xem trước CV",
+    FORM_TITLE: "Thông tin CV",
+    TEMPLATE_LABEL: "Chọn mẫu CV",
+    AI_SUMMARY_BUTTON: "AI tạo tóm tắt",
+    AI_ENHANCE_BUTTON: "AI tối ưu",
+    DOWNLOAD_PDF_BUTTON: "Tải CV (PDF)",
+    REWRITE_CV_BUTTON: "AI Viết lại CV",
+    SAVE_STATUS_IDLE: "",
+    SAVE_STATUS_SAVING: "Đang lưu...",
+    SAVE_STATUS_SAVED: "Đã lưu ✓",
+  },
+
   // Common
   COMMON: {
     GENERIC_ERROR: "Đã xảy ra lỗi không xác định",

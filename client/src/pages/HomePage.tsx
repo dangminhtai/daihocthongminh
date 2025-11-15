@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import Home from '../components/Home';
 import RoadmapSelector from '../components/RoadmapSelector';
@@ -5,8 +6,8 @@ import CareerPathfinder from '../components/CareerPathfinder';
 import Quiz from '../components/Quiz'; // Import component mới
 import Header from '../components/Header';
 import ChatBot from '../components/ChatBot';
+import Footer from '../components/Footer';
 import { View, IUser } from '../class/types';
-import { UI_MESSAGES } from '../config/ui';
 
 interface HomePageProps {
     onLogout: () => void;
@@ -45,9 +46,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogout, currentUser }) => {
                     {renderContent()}
                 </div>
             </main>
-            <footer className="text-center py-4 text-sm text-slate-500 dark:text-slate-400">
-                <p>{UI_MESSAGES.FOOTER.COPYRIGHT}</p>
-            </footer>
+            <Footer />
             <ChatBot />
         </div>
     );

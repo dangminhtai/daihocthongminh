@@ -1,3 +1,4 @@
+
 import type { ElementType } from 'react';
 
 export type View = 'home' | 'roadmap' | 'careerPath' | 'quiz';
@@ -69,4 +70,56 @@ export interface IUser {
   dateOfBirth?: string; // Ngày sinh
   phoneNumber?: string; // Số điện thoại
   bio?: string; // Mô tả ngắn
+}
+
+// Types for CV Generator
+export interface CVEducation {
+  id: string;
+  school: string;
+  degree: string;
+  fieldOfStudy?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+export interface CVExperience {
+  id: string;
+  company: string;
+  jobTitle: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+export interface CVSkill {
+  id: string;
+  skillName: string;
+  level?: string;
+}
+
+export interface CVProject {
+  id: string;
+  projectName: string;
+  description?: string;
+  link?: string;
+}
+
+export interface CVData {
+  _id?: string;
+  userId?: string;
+  template: string;
+  personalDetails: {
+    fullName: string;
+    jobTitle: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    avatarUrl: string;
+  };
+  summary: string;
+  education: CVEducation[];
+  experience: CVExperience[];
+  skills: CVSkill[];
+  projects: CVProject[];
 }

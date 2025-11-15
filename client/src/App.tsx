@@ -4,7 +4,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProfilePage from './pages/ProfilePage'; // Import trang Profile
+import ProfilePage from './pages/ProfilePage';
+import DocsPage from './pages/DocsPage';
+import RatingPage from './pages/RatingPage';
+import CVGeneratorPage from './pages/CVGeneratorPage'; // Import trang mới
 import './App.css';
 import { IUser } from './class/types';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -55,6 +58,18 @@ function App() {
             <Route
               path="/profile"
               element={isLoggedIn ? <ProfilePage currentUser={currentUser!} onUpdateUser={handleUserUpdate} onLogout={handleLogout} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/docs"
+              element={isLoggedIn ? <DocsPage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/rating"
+              element={isLoggedIn ? <RatingPage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/cv-generator"
+              element={isLoggedIn ? <CVGeneratorPage /> : <Navigate to="/login" />}
             />
           </Routes>
         </div>
