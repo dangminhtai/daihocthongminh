@@ -1,9 +1,9 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Input from '../components/common/Input';
 import SocialButton from '../components/common/SocialButton';
-import { UserIcon, LockIcon, FacebookIcon, TwitterIcon, GoogleIcon } from '../components/icons';
+import { UserIcon, LockIcon, FacebookIcon, GitHubIcon, GoogleIcon } from '../components/icons';
 import { IUser } from '../class/types';
 import { Eye, EyeOff } from 'lucide-react';
 import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
@@ -20,6 +20,48 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
     const navigate = useNavigate();
+
+    // --- Social Login Logic ---
+    useEffect(() => {
+        const handleAuthMessage = (event: MessageEvent) => {
+            // Chỉ chấp nhận message từ chính origin của mình để bảo mật
+            if (event.origin !== window.location.origin) {
+                return;
+            }
+
+            const { token, user, error: socialError } = event.data;
+
+            if (token && user) {
+                localStorage.setItem('token', token);
+                onLoginSuccess(user);
+            } else if (socialError) {
+                setError(socialError);
+            }
+        };
+
+        window.addEventListener('message', handleAuthMessage);
+
+        return () => {
+            window.removeEventListener('message', handleAuthMessage);
+        };
+    }, [onLoginSuccess]);
+
+    const handleSocialLogin = (provider: 'google' | 'facebook' | 'github') => {
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        const authUrl = `/api/auth/${provider}`;
+
+        window.open(
+            authUrl,
+            'social-login',
+            `width=${width},height=${height},left=${left},top=${top}`
+        );
+    };
+    // --- End Social Login Logic ---
+
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -108,15 +150,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 <div className="mt-10 text-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Or Sign In Using</p>
                     <div className="flex justify-center space-x-4">
-                        <SocialButton bgColor="bg-blue-600" aria-label="Sign in with Facebook">
-                            <FacebookIcon className="w-5 h-5" />
-                        </SocialButton>
-                        <SocialButton bgColor="bg-sky-500" aria-label="Sign in with Twitter">
-                            <TwitterIcon className="w-5 h-5" />
-                        </SocialButton>
-                        <SocialButton bgColor="bg-white" aria-label="Sign in with Google">
-                            <GoogleIcon className="w-6 h-6" />
-                        </SocialButton>
+                        <div onClick={() => handleSocialLogin('facebook')}>
+                            <SocialButton bgColor="bg-blue-600" aria-label="Sign in with Facebook">
+                                <FacebookIcon className="w-5 h-5" />
+                            </SocialButton>
+                        </div>
+                        <div onClick={() => handleSocialLogin('github')}>
+                            <SocialButton bgColor="bg-gray-800" aria-label="Sign in with GitHub">
+                                <GitHubIcon className="w-5 h-5" />
+                            </SocialButton>
+                        </div>
+                        <div onClick={() => handleSocialLogin('google')}>
+                            <SocialButton bgColor="bg-white" aria-label="Sign in with Google">
+                                <GoogleIcon className="w-6 h-6" />
+                            </SocialButton>
+                        </div>
                     </div>
                 </div>
 
