@@ -1,31 +1,54 @@
-
 import React, { useState, useCallback } from 'react';
 import { SUBJECTS } from '../config/constants';
-import { Subject, CareerSuggestion } from '../class/types';
+import { CareerSuggestion } from '../class/types';
 import { suggestCareersForSubjects } from '../services/geminiService';
 import { ERROR_MESSAGES } from '../config/errors';
 import { UI_MESSAGES } from '../config/ui';
 import LoadingSpinner from './common/LoadingSpinner';
 import BackButton from './common/BackButton';
-import { Lightbulb, Briefcase } from 'lucide-react';
+import { Lightbulb, Briefcase, Plus, X } from 'lucide-react';
 
 interface CareerPathfinderProps {
     onBack: () => void;
 }
 
 const CareerPathfinder: React.FC<CareerPathfinderProps> = ({ onBack }) => {
-    const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
+    const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+    const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState<CareerSuggestion[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const toggleSubject = (subject: Subject) => {
-        setSelectedSubjects((prev) =>
-            prev.some((s) => s.id === subject.id)
-                ? prev.filter((s) => s.id !== subject.id)
-                : [...prev, subject]
-        );
+    const handleAddSubject = useCallback((subjectName: string) => {
+        const trimmedValue = subjectName.trim();
+        if (trimmedValue && !selectedSubjects.includes(trimmedValue)) {
+            setSelectedSubjects((prev) => [...prev, trimmedValue]);
+        }
+    }, [selectedSubjects]);
+
+    const handleAddFromInput = useCallback(() => {
+        handleAddSubject(inputValue);
+        setInputValue('');
+    }, [inputValue, handleAddSubject]);
+
+    const handleRemoveSubject = (subjectToRemove: string) => {
+        setSelectedSubjects((prev) => prev.filter((subject) => subject !== subjectToRemove));
+    };
+
+    const handleToggleSuggestedSubject = (subjectName: string) => {
+        if (selectedSubjects.includes(subjectName)) {
+            handleRemoveSubject(subjectName);
+        } else {
+            handleAddSubject(subjectName);
+        }
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAddFromInput();
+        }
     };
 
     const handleSubmit = useCallback(async () => {
@@ -37,8 +60,7 @@ const CareerPathfinder: React.FC<CareerPathfinderProps> = ({ onBack }) => {
         setError(null);
         setIsSubmitted(true);
         try {
-            const subjectNames = selectedSubjects.map((s) => s.name);
-            const result = await suggestCareersForSubjects(subjectNames);
+            const result = await suggestCareersForSubjects(selectedSubjects);
             setSuggestions(result);
         } catch (err) {
             setError(err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR);
@@ -60,7 +82,7 @@ const CareerPathfinder: React.FC<CareerPathfinderProps> = ({ onBack }) => {
                 <BackButton onClick={reset} />
                 <h2 className="text-2xl font-bold text-center mb-2">{UI_MESSAGES.CAREER_PATHFINDER.RESULT_TITLE}</h2>
                 <p className="text-center text-slate-600 mb-8">
-                    {UI_MESSAGES.CAREER_PATHFINDER.SELECTED_SUBJECTS_LABEL} {selectedSubjects.map(s => s.name).join(', ')}
+                    {UI_MESSAGES.CAREER_PATHFINDER.SELECTED_SUBJECTS_LABEL} {selectedSubjects.join(', ')}
                 </p>
 
                 {isLoading && <LoadingSpinner />}
@@ -98,22 +120,64 @@ const CareerPathfinder: React.FC<CareerPathfinderProps> = ({ onBack }) => {
                 <p className="mt-2 text-slate-600">{UI_MESSAGES.CAREER_PATHFINDER.DESCRIPTION}</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {SUBJECTS.map((subject) => {
-                    const isSelected = selectedSubjects.some(s => s.id === subject.id);
-                    return (
-                        <button
-                            key={subject.id}
-                            onClick={() => toggleSubject(subject)}
-                            className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 text-center ${isSelected
-                                    ? 'bg-indigo-600 text-white shadow-md'
-                                    : 'bg-white text-slate-700 hover:bg-indigo-50'
-                                }`}
-                        >
-                            {subject.name}
-                        </button>
-                    )
-                })}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Nhập tên môn học và nhấn Enter..."
+                        className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                        onClick={handleAddFromInput}
+                        className="flex-shrink-0 px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors flex items-center gap-2"
+                        aria-label="Thêm môn học"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Thêm
+                    </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 min-h-[48px] p-2 bg-gray-50 rounded-lg border">
+                    {selectedSubjects.length === 0 && (
+                        <p className="text-sm text-gray-400 p-2">Các môn học bạn thêm sẽ xuất hiện ở đây...</p>
+                    )}
+                    {selectedSubjects.map((subject, index) => (
+                        <span key={index} className="flex items-center gap-2 bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full animate-fade-in">
+                            {subject}
+                            <button
+                                onClick={() => handleRemoveSubject(subject)}
+                                className="text-indigo-500 hover:text-indigo-700"
+                                aria-label={`Xóa ${subject}`}
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mt-8">
+                <h3 className="text-lg font-semibold text-slate-700 mb-4">Hoặc chọn từ các môn học phổ biến:</h3>
+                <div className="flex flex-wrap gap-3">
+                    {SUBJECTS.map((subject) => {
+                        const isSelected = selectedSubjects.includes(subject.name);
+                        return (
+                            <button
+                                key={subject.id}
+                                onClick={() => handleToggleSuggestedSubject(subject.name)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isSelected
+                                        ? 'bg-indigo-600 text-white shadow-md'
+                                        : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-300'
+                                    }`}
+                            >
+                                {subject.name}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             {error && <p className="text-center text-red-500 mt-4">{error}</p>}

@@ -1,17 +1,17 @@
 
 import { Roadmap, Subject } from '../class/types';
-import { Code, Briefcase, Palette } from 'lucide-react';
+import { Code, Briefcase, Palette, Wrench, BookOpen, Newspaper } from 'lucide-react';
 
 export const ROADMAPS: Roadmap[] = [
   {
     id: 'tech',
-    name: 'Công nghệ & Kỹ thuật',
+    name: 'Công nghệ thông tin',
     description: 'Dành cho những người đam mê sáng tạo công nghệ, giải quyết vấn đề bằng logic và thuật toán.',
     icon: Code,
   },
   {
-    id: 'business',
-    name: 'Kinh doanh & Quản lý',
+    id: 'economy',
+    name: 'Kinh tế',
     description: 'Phù hợp với những ai có tư duy chiến lược, kỹ năng lãnh đạo và mong muốn phát triển kinh tế.',
     icon: Briefcase,
   },
@@ -21,6 +21,24 @@ export const ROADMAPS: Roadmap[] = [
     description: 'Con đường cho các tâm hồn sáng tạo, yêu cái đẹp, và muốn khám phá văn hóa, xã hội con người.',
     icon: Palette,
   },
+  {
+    id: 'mechanical_engineering',
+    name: 'Cơ khí động lực',
+    description: 'Nghề dành cho những người đam mê thiết kế, cấu trúc máy móc và các hệ thống cơ khí.',
+    icon: Wrench,
+  },
+  {
+    id: 'foreign_language',
+    name: 'Ngoại ngữ',
+    description: 'Khoa dành cho những đối tượng muốn tìm hiểu thêm về ngôn ngữ và văn hóa của các quốc gia khác.',
+    icon: BookOpen,
+  },
+  {
+    id: 'journalism',
+    name: 'Truyền thông',
+    description: 'Khoa dành cho những đối tượng bắt kịp những tin tức mới nhất và luôn là người đầu tiên bắt gặp những sự kiện thú vị nhất.',
+    icon: Newspaper,
+  }
 ];
 
 export const SUBJECTS: Subject[] = [

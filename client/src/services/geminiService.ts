@@ -3,6 +3,7 @@ import { MajorSuggestion, CareerSuggestion, MajorDetails } from '../class/types'
 import { geminiMajorPrompt } from '../config/prompt/majors/gemini_conf';
 import { geminiCareerPrompt } from '../config/prompt/careers/gemini_conf';
 import { geminiMajorDetailsPrompt } from '../config/prompt/majors/gemini_details_conf';
+import { geminiFactPrompt } from "../config/prompt/facts_conf";
 import { ERROR_MESSAGES, ERROR_LOG_MESSAGES } from '../config/errors';
 
 // Initialize API key
@@ -94,5 +95,32 @@ export const getMajorDetails = async (majorName: string): Promise<MajorDetails> 
     console.error(`Lỗi khi lấy chi tiết chuyên ngành ${majorName}:`, error);
     const errorMessage = error?.message || `Không thể lấy chi tiết cho chuyên ngành ${majorName}.`;
     throw new Error(errorMessage);
+  }
+};
+
+/**
+ * Lấy một sự thật thú vị về nghề nghiệp
+ * @returns Một chuỗi chứa sự thật thú vị
+ */
+export const getCareerFact = async (): Promise<string> => {
+  try {
+    if (!apiKey) {
+      throw new Error(ERROR_MESSAGES.API_KEY_NOT_CONFIGURED);
+    }
+
+    const response = await ai.models.generateContent({
+      model: geminiFactPrompt.model,
+      contents: geminiFactPrompt.contents,
+    });
+
+    const fact = response.text.trim();
+    if (!fact) {
+      throw new Error("Không thể tạo sự thật thú vị.");
+    }
+    return fact;
+  } catch (error: any) {
+    console.error("Lỗi khi lấy sự thật thú vị:", error);
+    // Trả về một sự thật dự phòng để không làm hỏng giao diện
+    return "Việt Nam là một trong những quốc gia xuất khẩu phần mềm hàng đầu trong khu vực Đông Nam Á.";
   }
 };
