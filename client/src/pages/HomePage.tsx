@@ -8,17 +8,24 @@ import ChatBot from '../components/ChatBot';
 import { View } from '../class/types';
 import { UI_MESSAGES } from '../config/ui';
 
-const HomePage: React.FC = () => {
-    const [currentView, setCurrentView] = useState<View>('home');
+interface HomePageProps {
+    onLogout: () => void;
+}
 
-    const navigateTo = useCallback((view: View) => {
-        setCurrentView(view);
+const HomePage: React.FC<HomePageProps> = ({ onLogout }) => {
+    const [currentView, setCurrentView] = useState<{ view: View; payload?: any }>({ view: 'home' });
+
+    const navigateTo = useCallback((view: View, payload?: any) => {
+        setCurrentView({ view, payload });
     }, []);
 
     const renderContent = () => {
-        switch (currentView) {
+        switch (currentView.view) {
             case 'roadmap':
-                return <RoadmapSelector onBack={() => navigateTo('home')} />;
+                return <RoadmapSelector
+                    onBack={() => navigateTo('home')}
+                    preselectedRoadmapId={currentView.payload}
+                />;
             case 'careerPath':
                 return <CareerPathfinder onBack={() => navigateTo('home')} />;
             case 'home':
@@ -29,9 +36,9 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Header />
+            <Header onLogout={onLogout} />
             <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-5xl mx-auto">
                     {renderContent()}
                 </div>
             </main>

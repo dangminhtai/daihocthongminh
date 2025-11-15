@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { ROADMAPS } from '../config/constants';
 import { Roadmap as RoadmapType, MajorSuggestion, MajorDetails } from '../class/types';
 import { suggestMajorsForRoadmap, getMajorDetails } from '../services/geminiService';
@@ -10,15 +11,14 @@ import { CheckCircle, Zap, ChevronRight, Target, BookOpen, Star, GraduationCap, 
 
 interface RoadmapSelectorProps {
   onBack: () => void;
+  preselectedRoadmapId?: string;
 }
 
-const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
+const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack, preselectedRoadmapId }) => {
   const [selectedRoadmap, setSelectedRoadmap] = useState<RoadmapType | null>(null);
   const [suggestions, setSuggestions] = useState<MajorSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // New states for major details view
   const [inspectingMajor, setInspectingMajor] = useState<MajorSuggestion | null>(null);
   const [majorDetails, setMajorDetails] = useState<MajorDetails | null>(null);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
@@ -38,6 +38,15 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (preselectedRoadmapId) {
+      const roadmapToSelect = ROADMAPS.find(r => r.id === preselectedRoadmapId);
+      if (roadmapToSelect) {
+        handleSelectRoadmap(roadmapToSelect);
+      }
+    }
+  }, [preselectedRoadmapId, handleSelectRoadmap]);
+
   const handleSelectMajor = useCallback(async (major: MajorSuggestion) => {
     setInspectingMajor(major);
     setIsDetailsLoading(true);
@@ -54,9 +63,13 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
   }, []);
 
   const resetSelection = () => {
-    setSelectedRoadmap(null);
-    setSuggestions([]);
-    setError(null);
+    if (preselectedRoadmapId) {
+      onBack();
+    } else {
+      setSelectedRoadmap(null);
+      setSuggestions([]);
+      setError(null);
+    }
   };
 
   const backToSuggestions = () => {
@@ -65,7 +78,6 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     setError(null);
   };
 
-  // Render Major Details View
   if (inspectingMajor) {
     return (
       <div>
@@ -159,7 +171,6 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     );
   }
 
-  // Render Major Suggestions List
   if (selectedRoadmap) {
     return (
       <div>
@@ -207,7 +218,6 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     );
   }
 
-  // Render Initial Roadmaps Selection
   return (
     <div>
       <BackButton onClick={onBack} />
