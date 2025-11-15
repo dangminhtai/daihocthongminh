@@ -26,3 +26,11 @@ export interface CareerSuggestion {
   description: string;
   suitability: string;
 }
+
+export interface MajorDetails {
+  trainingObjectives: string;
+  mainSubjects: string[];
+  electiveSubjects: string[];
+  curriculumRoadmap: string[];
+  careerOrientations: string[];
+}

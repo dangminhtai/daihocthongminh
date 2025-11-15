@@ -1,13 +1,12 @@
-
 import React, { useState, useCallback } from 'react';
 import { ROADMAPS } from '../config/constants';
-import { Roadmap as RoadmapType, MajorSuggestion } from '../class/types';
-import { suggestMajorsForRoadmap } from '../services/geminiService';
+import { Roadmap as RoadmapType, MajorSuggestion, MajorDetails } from '../class/types';
+import { suggestMajorsForRoadmap, getMajorDetails } from '../services/geminiService';
 import { ERROR_MESSAGES } from '../config/errors';
 import { UI_MESSAGES } from '../config/ui';
 import LoadingSpinner from './common/LoadingSpinner';
 import BackButton from './common/BackButton';
-import { CheckCircle, Zap } from 'lucide-react';
+import { CheckCircle, Zap, ChevronRight, Target, BookOpen, Star, GraduationCap, Briefcase } from 'lucide-react';
 
 interface RoadmapSelectorProps {
   onBack: () => void;
@@ -18,6 +17,11 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
   const [suggestions, setSuggestions] = useState<MajorSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // New states for major details view
+  const [inspectingMajor, setInspectingMajor] = useState<MajorSuggestion | null>(null);
+  const [majorDetails, setMajorDetails] = useState<MajorDetails | null>(null);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
 
   const handleSelectRoadmap = useCallback(async (roadmap: RoadmapType) => {
     setSelectedRoadmap(roadmap);
@@ -34,12 +38,128 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     }
   }, []);
 
+  const handleSelectMajor = useCallback(async (major: MajorSuggestion) => {
+    setInspectingMajor(major);
+    setIsDetailsLoading(true);
+    setError(null);
+    setMajorDetails(null);
+    try {
+      const result = await getMajorDetails(major.majorName);
+      setMajorDetails(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR);
+    } finally {
+      setIsDetailsLoading(false);
+    }
+  }, []);
+
   const resetSelection = () => {
     setSelectedRoadmap(null);
     setSuggestions([]);
     setError(null);
   };
 
+  const backToSuggestions = () => {
+    setInspectingMajor(null);
+    setMajorDetails(null);
+    setError(null);
+  };
+
+  // Render Major Details View
+  if (inspectingMajor) {
+    return (
+      <div>
+        <BackButton onClick={backToSuggestions} />
+        <h2 className="text-3xl font-bold text-center mb-2">{inspectingMajor.majorName}</h2>
+        <p className="text-indigo-600 font-semibold text-center text-lg mb-8">{selectedRoadmap?.name}</p>
+
+        {isDetailsLoading && <LoadingSpinner />}
+        {error && <p className="text-center text-red-500 bg-red-100 p-4 rounded-lg">{error}</p>}
+
+        {!isDetailsLoading && !error && majorDetails && (
+          <div className="space-y-8 bg-white p-6 md:p-8 rounded-lg shadow-lg animate-fade-in">
+            <div className="border-b pb-6">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center mb-3">
+                <Target className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" />
+                Mục tiêu đào tạo
+              </h3>
+              <p className="text-slate-600 leading-relaxed">{majorDetails.trainingObjectives}</p>
+            </div>
+
+            <div className="border-b pb-6">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center mb-4">
+                <BookOpen className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" />
+                Các môn học tiêu biểu
+              </h3>
+              <div className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                <div>
+                  <h4 className="font-semibold text-slate-700 mb-2 flex items-center">
+                    <Star className="h-5 w-5 mr-2 text-yellow-500" />
+                    Môn học cốt lõi
+                  </h4>
+                  <ul className="space-y-2">
+                    {majorDetails.mainSubjects.map((subject, i) => (
+                      <li key={i} className="flex items-start text-slate-600">
+                        <ChevronRight className="h-5 w-5 mr-1 text-green-500 flex-shrink-0 mt-0.5" />
+                        <span>{subject}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-700 mb-2 flex items-center">
+                    <Star className="h-5 w-5 mr-2 text-gray-400" />
+                    Môn học tự chọn
+                  </h4>
+                  <ul className="space-y-2">
+                    {majorDetails.electiveSubjects.map((subject, i) => (
+                      <li key={i} className="flex items-start text-slate-600">
+                        <ChevronRight className="h-5 w-5 mr-1 text-gray-400 flex-shrink-0 mt-0.5" />
+                        <span>{subject}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-b pb-6">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center mb-3">
+                <GraduationCap className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" />
+                Lộ trình học tập
+              </h3>
+              <ul className="space-y-3">
+                {majorDetails.curriculumRoadmap.map((item, i) => (
+                  <li key={i} className="flex items-start text-slate-600">
+                    <ChevronRight className="h-5 w-5 mr-2 text-indigo-400 flex-shrink-0 mt-0.5" />
+                    <span className="font-semibold text-slate-700 mr-2">{item.split(':')[0]}:</span>
+                    <span>{item.split(':').slice(1).join(':').trim()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 flex items-center mb-3">
+                <Briefcase className="h-6 w-6 mr-3 text-indigo-500 flex-shrink-0" />
+                Định hướng nghề nghiệp
+              </h3>
+              <ul className="space-y-2">
+                {majorDetails.careerOrientations.map((career, i) => (
+                  <li key={i} className="flex items-start text-slate-600">
+                    <ChevronRight className="h-5 w-5 mr-1 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>{career}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Render Major Suggestions List
   if (selectedRoadmap) {
     return (
       <div>
@@ -53,17 +173,26 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
         {!isLoading && !error && (
           <div className="space-y-6">
             {suggestions.map((suggestion, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-500 transition-transform transform hover:scale-105 duration-300">
-                <h3 className="text-xl font-bold text-slate-800 flex items-center">
-                  <Zap className="h-5 w-5 mr-2 text-yellow-500" />
-                  {suggestion.majorName}
-                </h3>
-                <p className="mt-2 text-slate-600">{suggestion.description}</p>
+              <div
+                key={index}
+                onClick={() => handleSelectMajor(suggestion)}
+                className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-500 transition-all duration-300 cursor-pointer group hover:shadow-xl hover:border-indigo-600 transform hover:scale-[1.02]"
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-slate-800 flex items-center">
+                      <Zap className="h-5 w-5 mr-2 text-yellow-500" />
+                      {suggestion.majorName}
+                    </h3>
+                    <p className="mt-2 text-slate-600">{suggestion.description}</p>
+                  </div>
+                  <ChevronRight className="h-8 w-8 text-indigo-300 group-hover:text-indigo-500 transition-colors ml-4 flex-shrink-0" />
+                </div>
                 <div className="mt-4">
                   <h4 className="font-semibold text-slate-700">{UI_MESSAGES.ROADMAP_SELECTOR.CORE_SKILLS_LABEL}</h4>
                   <ul className="mt-2 space-y-1">
                     {suggestion.coreSkills.map((skill, i) => (
-                      <li key={i} className="flex items-center text-slate-600">
+                      <li key={i} className="flex items-center text-slate-600 text-sm">
                         <CheckCircle className="h-4 w-4 mr-2 text-green-500 flex-shrink-0" />
                         <span>{skill}</span>
                       </li>
@@ -78,6 +207,7 @@ const RoadmapSelector: React.FC<RoadmapSelectorProps> = ({ onBack }) => {
     );
   }
 
+  // Render Initial Roadmaps Selection
   return (
     <div>
       <BackButton onClick={onBack} />

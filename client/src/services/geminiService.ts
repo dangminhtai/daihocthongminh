@@ -1,9 +1,8 @@
-
 import { GoogleGenAI } from "@google/genai";
-import { MajorSuggestion, CareerSuggestion } from '../class/types';
+import { MajorSuggestion, CareerSuggestion, MajorDetails } from '../class/types';
 import { geminiMajorPrompt } from '../config/prompt/majors/gemini_conf';
 import { geminiCareerPrompt } from '../config/prompt/careers/gemini_conf';
-// FIX: Xóa import không sử dụng
+import { geminiMajorDetailsPrompt } from '../config/prompt/majors/gemini_details_conf';
 import { ERROR_MESSAGES, ERROR_LOG_MESSAGES } from '../config/errors';
 
 // Initialize API key
@@ -67,6 +66,33 @@ export const suggestCareersForSubjects = async (subjectNames: string[]): Promise
   } catch (error: any) {
     console.error(ERROR_LOG_MESSAGES.CAREER_SUGGESTION_ERROR, error);
     const errorMessage = error?.message || ERROR_MESSAGES.CAREER_SUGGESTION_FAILED;
+    throw new Error(errorMessage);
+  }
+};
+
+/**
+ * Lấy thông tin chi tiết về một chuyên ngành
+ * @param majorName - Tên chuyên ngành
+ * @returns Chi tiết chuyên ngành
+ */
+export const getMajorDetails = async (majorName: string): Promise<MajorDetails> => {
+  try {
+    if (!apiKey) {
+      throw new Error(ERROR_MESSAGES.API_KEY_NOT_CONFIGURED);
+    }
+
+    const response = await ai.models.generateContent({
+      model: geminiMajorDetailsPrompt.model,
+      contents: geminiMajorDetailsPrompt.contents.replace("{{majorName}}", majorName),
+      config: geminiMajorDetailsPrompt.resSchema,
+    });
+
+    const jsonText = response.text.trim();
+    const details: MajorDetails = JSON.parse(jsonText);
+    return details;
+  } catch (error: any) {
+    console.error(`Lỗi khi lấy chi tiết chuyên ngành ${majorName}:`, error);
+    const errorMessage = error?.message || `Không thể lấy chi tiết cho chuyên ngành ${majorName}.`;
     throw new Error(errorMessage);
   }
 };
