@@ -21,7 +21,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                     >
                         <AuthIllustration className="w-full max-w-lg" />
                         <h1 className="text-3xl font-bold text-slate-700 dark:text-slate-200 mt-8 text-center">
-                            Khám phá Tương lai của bạn với <span className="text-indigo-500">Trí tuệ Nhân tạo</span>
+                            Khám phá Tương lai với <span className="text-indigo-500">AI</span>
                         </h1>
                         <p className="text-slate-500 dark:text-slate-400 mt-2 text-center max-w-md">
                             Nhận những gợi ý được cá nhân hóa về lộ trình học tập và định hướng nghề nghiệp.

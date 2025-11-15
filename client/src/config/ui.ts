@@ -48,7 +48,7 @@ export const UI_MESSAGES = {
 
   // Home
   HOME: {
-    QUIZ_TITLE: "Trắc nghiệm AI Khám phá",
+    QUIZ_TITLE: "Trắc nghiệm Khám phá cùng AI",
     QUIZ_DESCRIPTION: "Chưa biết bắt đầu từ đâu? Trả lời vài câu hỏi nhanh để AI gợi ý chuyên ngành, nghề nghiệp phù hợp.",
     ROADMAP_TITLE: "Khám phá Lộ trình",
     ROADMAP_DESCRIPTION: "Duyệt qua các khối ngành lớn như Công nghệ, Kinh doanh, Nghệ thuật...",
@@ -60,13 +60,13 @@ export const UI_MESSAGES = {
 
   // Header
   HEADER: {
-    TITLE: "Đại học",
-    TITLE_HIGHLIGHT: "Thông minh",
+    TITLE: "UTE",
+    TITLE_HIGHLIGHT: "Orie",
   },
 
   // Footer
   FOOTER: {
-    COPYRIGHT: "© 2024 Đại học Thông minh. Phát triển bởi chuyên gia AI.",
+    COPYRIGHT: "© 2025 UTE - Orie. Phát triển bởi team Anh Em Sài Gòn.",
   },
 
   // CV Generator

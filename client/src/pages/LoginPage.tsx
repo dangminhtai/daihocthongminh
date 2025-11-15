@@ -103,22 +103,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
             >
-                <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">Login</h2>
+                <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">Đăng Nhập</h2>
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <Input
                         id="gmail"
                         label="Email"
                         type="email"
-                        placeholder="Type your email"
+                        placeholder="Nhập email của bạn"
                         value={gmail}
                         onChange={(e) => setGmail(e.target.value)}
                         icon={<UserIcon className="w-5 h-5" />}
                     />
                     <Input
                         id="password"
-                        label="Password"
+                        label="Mật Khẩu"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Type your password"
+                        placeholder="Nhập mật khẩu"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         icon={<LockIcon className="w-5 h-5" />}
@@ -134,7 +134,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                             onClick={() => setIsForgotModalOpen(true)}
                             className="text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                         >
-                            Forgot password?
+                            Quên mật khẩu?
                         </button>
                     </div>
                     <button
@@ -142,26 +142,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         disabled={isLoading}
                         className="w-full text-white font-bold py-3 px-4 rounded-full bg-gradient-to-r from-sky-400 to-pink-500 hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                     >
-                        {isLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : 'LOGIN'}
+                        {isLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : 'Đăng Nhập'}
                     </button>
                     {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
                 </form>
 
                 <div className="mt-10 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Or Sign In Using</p>
+                    <p className="text-sypem text-gray-500 dark:text-gray-400 mb-4">hoặc <strong><b>Đăng Nhập</b></strong> với</p>
                     <div className="flex justify-center space-x-4">
                         <div onClick={() => handleSocialLogin('facebook')}>
-                            <SocialButton bgColor="bg-blue-600" aria-label="Sign in with Facebook">
+                            <SocialButton bgColor="bg-blue-600" aria-label="Đăng nhập bằng Facebook">
                                 <FacebookIcon className="w-5 h-5" />
                             </SocialButton>
                         </div>
                         <div onClick={() => handleSocialLogin('github')}>
-                            <SocialButton bgColor="bg-gray-800" aria-label="Sign in with GitHub">
+                            <SocialButton bgColor="bg-gray-800" aria-label="Đăng nhập bằng GitHub">
                                 <GitHubIcon className="w-5 h-5" />
                             </SocialButton>
                         </div>
                         <div onClick={() => handleSocialLogin('google')}>
-                            <SocialButton bgColor="bg-white" aria-label="Sign in with Google">
+                            <SocialButton bgColor="bg-white" aria-label="Đăng nhập bằng Google">
                                 <GoogleIcon className="w-6 h-6" />
                             </SocialButton>
                         </div>
@@ -170,12 +170,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
                 <div className="mt-10 text-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Don't have an account?{' '}
+                        Không có tài khoản?{' '}
                         <button
                             onClick={() => navigate('/register')}
                             className="font-semibold text-purple-600 hover:underline dark:text-purple-400"
                         >
-                            SIGN UP
+                            <b>Đăng Ký</b>
                         </button>
                     </p>
                 </div>

@@ -1,15 +1,14 @@
-
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { IUser } from '../class/types';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Book, Code, LifeBuoy } from 'lucide-react';
+import { Book, Shield, LifeBuoy } from 'lucide-react';
 
 const placeholderUser: IUser = {
     _id: 'placeholder',
-    fullName: 'Placeholder User',
+    fullName: 'Sinh viên UTE',
     userId: '000000',
     avatarUrl: '',
 };
@@ -34,59 +33,41 @@ const DocsPage: React.FC = () => {
                 >
                     <div className="text-center mb-12">
                         <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-slate-50 mb-4">
-                            Tài liệu & Hướng dẫn
+                            Chính sách & Quy định
                         </h1>
                         <p className="text-lg text-slate-600 dark:text-slate-300">
-                            Tìm hiểu cách tận dụng tối đa các công cụ AI của chúng tôi.
+                            Đọc kỹ các chính sách để đảm bảo trải nghiệm một cách tốt nhất.
                         </p>
                     </div>
 
                     <div className="space-y-8 bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg">
                         <section>
                             <h2 className="text-2xl font-bold flex items-center text-slate-800 dark:text-slate-200 mb-4">
-                                <Book className="w-6 h-6 mr-3 text-indigo-500" />
-                                Bắt đầu
+                                <Shield className="w-6 h-6 mr-3 text-green-500" />
+                                Chính sách quyền riêng tư
                             </h2>
                             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                                Chào mừng bạn đến với Đại học Thông minh! Nền tảng của chúng tôi được thiết kế để cung cấp cho bạn những gợi ý được cá nhân hóa về con đường học tập và sự nghiệp bằng cách sử dụng trí tuệ nhân tạo tiên tiến. Bắt đầu bằng cách khám phá các tính năng trên trang chủ: làm một bài trắc nghiệm nhanh, khám phá các lộ trình học tập, hoặc tìm kiếm nghề nghiệp dựa trên các môn học yêu thích của bạn.
+                                Chúng tôi cam kết bảo vệ thông tin cá nhân của sinh viên. Dữ liệu sẽ chỉ được sử dụng để nâng cao trải nghiệm học tập và không chia sẻ với bên thứ ba nếu không được phép.
                             </p>
                         </section>
 
                         <section>
                             <h2 className="text-2xl font-bold flex items-center text-slate-800 dark:text-slate-200 mb-4">
-                                <Code className="w-6 h-6 mr-3 text-green-500" />
-                                Tích hợp API (Ví dụ)
+                                <Book className="w-6 h-6 mr-3 text-indigo-500" />
+                                Quy định sử dụng nền tảng
                             </h2>
-                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                                Đối với các nhà phát triển, chúng tôi cung cấp một API mạnh mẽ để tích hợp các dịch vụ gợi ý của chúng tôi vào ứng dụng của bạn. Dưới đây là một ví dụ về cách gọi API để nhận gợi ý chuyên ngành.
+                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                Sinh viên được phép truy cập, sử dụng tài nguyên học tập và gợi ý nghề nghiệp. Mọi hành vi phá hoại đều sẽ bị chặn.
                             </p>
-                            <div className="bg-slate-100 dark:bg-slate-900 rounded-lg p-4 overflow-x-auto">
-                                <pre className="text-sm text-slate-800 dark:text-slate-200"><code>
-                                    {`
-fetch('https://api.daihocthongminh.vn/v1/suggestions/majors', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_API_KEY'
-  },
-  body: JSON.stringify({
-    roadmap: 'Công nghệ & Kỹ thuật'
-  })
-})
-.then(response => response.json())
-.then(data => console.log(data));
-`}
-                                </code></pre>
-                            </div>
                         </section>
 
                         <section>
                             <h2 className="text-2xl font-bold flex items-center text-slate-800 dark:text-slate-200 mb-4">
                                 <LifeBuoy className="w-6 h-6 mr-3 text-red-500" />
-                                Hỗ trợ
+                                Hỗ trợ & Liên hệ
                             </h2>
                             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                                Nếu bạn gặp bất kỳ vấn đề nào hoặc có câu hỏi, đừng ngần ngại liên hệ với đội ngũ hỗ trợ của chúng tôi tại <a href="mailto:support@daihocthongminh.vn" className="text-indigo-600 dark:text-indigo-400 hover:underline">support@daihocthongminh.vn</a>. Chúng tôi luôn sẵn lòng giúp đỡ!
+                                Mọi thắc mắc về chính sách hoặc vấn đề kỹ thuật, sinh viên có thể liên hệ với bộ phận hỗ trợ qua email <a href="https://google.com" target='blank' className="text-indigo-600 dark:text-indigo-400 hover:underline">support@UTEOrie.vn</a>.
                             </p>
                         </section>
                     </div>
