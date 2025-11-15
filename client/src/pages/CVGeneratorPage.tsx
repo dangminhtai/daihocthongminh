@@ -12,7 +12,7 @@ import CVPreview from '../components/CVPreview';
 import TemplateSelector from '../components/cv/TemplateSelector';
 import TemplateEditor from '../components/cv/TemplateEditor'; // Import editor
 import { UI_MESSAGES } from '../config/ui';
-import { Plus, Trash2, Wand2, Loader2, Download, BrainCircuit, LayoutTemplate } from 'lucide-react';
+import { Plus, Trash2, Wand2, Loader2, Download, BrainCircuit, LayoutTemplate, FolderSearch } from 'lucide-react';
 
 const placeholderUser: IUser = { _id: 'p', fullName: 'P', userId: 'p', avatarUrl: '' };
 
@@ -23,12 +23,12 @@ const CVGeneratorPage: React.FC = () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || JSON.stringify(placeholderUser));
 
     const [cvData, setCVData] = useState<CVData | null>(null);
-    const [templates, setTemplates] = useState<CVTemplate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
     const [aiLoading, setAiLoading] = useState<{ type: string, index?: number } | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [isTemplateEditorOpen, setIsTemplateEditorOpen] = useState(false); // State for editor
+    const [isTemplateBrowserOpen, setIsTemplateBrowserOpen] = useState(false);
+    const [isTemplateEditorOpen, setIsTemplateEditorOpen] = useState(false);
     const saveTimeoutRef = useRef<number | null>(null);
     const avatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,9 +36,8 @@ const CVGeneratorPage: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [cv, temps] = await Promise.all([getCVData(), getCVTemplates()]);
+                const cv = await getCVData();
                 setCVData(cv);
-                setTemplates(temps);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -68,7 +67,7 @@ const CVGeneratorPage: React.FC = () => {
                     setError(err.message);
                     setSaveStatus('idle');
                 });
-        }, 1500); // 1.5 second debounce
+        }, 1500);
 
         return () => {
             if (saveTimeoutRef.current) {
@@ -225,15 +224,14 @@ const CVGeneratorPage: React.FC = () => {
         }
     };
 
-    const handleTemplateSelect = (templateId: string) => {
-        const selectedTemplate = templates.find(t => t._id === templateId);
-        if (selectedTemplate && cvData) {
-            setCVData({ ...cvData, template: selectedTemplate });
+    const handleTemplateSelect = (template: CVTemplate) => {
+        if (template && cvData) {
+            setCVData({ ...cvData, template: template });
         }
+        setIsTemplateBrowserOpen(false);
     };
 
     const handleSaveNewTemplate = (newTemplate: CVTemplate) => {
-        setTemplates(prev => [newTemplate, ...prev]);
         if (cvData) {
             setCVData({ ...cvData, template: newTemplate });
         }
@@ -272,15 +270,23 @@ const CVGeneratorPage: React.FC = () => {
                         <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md h-full max-h-[75vh] overflow-y-auto">
                             <h2 className="text-xl font-bold mb-4 dark:text-slate-100">{UI_MESSAGES.CV_GENERATOR.FORM_TITLE}</h2>
                             <div className="space-y-6">
-                                <div className="flex justify-between items-center">
-                                    <TemplateSelector
-                                        templates={templates}
-                                        currentTemplateId={cvData.template?._id || ''}
-                                        onSelectTemplate={handleTemplateSelect}
-                                    />
-                                    <button onClick={() => setIsTemplateEditorOpen(true)} className="ml-4 flex-shrink-0 flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-300 rounded-lg shadow hover:bg-gray-200">
-                                        <LayoutTemplate className="w-4 h-4" /> Tạo mẫu mới
-                                    </button>
+                                <div>
+                                    <h3 className="font-semibold mb-2 dark:text-slate-300">{UI_MESSAGES.CV_GENERATOR.TEMPLATE_SECTION_TITLE}</h3>
+                                    <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                                        <div className="w-16 h-20 bg-slate-200 dark:bg-slate-600 rounded flex-shrink-0 flex items-center justify-center">
+                                            <LayoutTemplate className="w-8 h-8 text-slate-500" />
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="font-bold text-sm dark:text-white">{cvData.template.name}</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">{cvData.template.description}</p>
+                                        </div>
+                                        <button onClick={() => setIsTemplateBrowserOpen(true)} className="ml-4 flex-shrink-0 flex items-center gap-2 px-3 py-2 text-sm bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-lg shadow-sm border dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600">
+                                            <FolderSearch className="w-4 h-4" />Duyệt mẫu
+                                        </button>
+                                        <button onClick={() => setIsTemplateEditorOpen(true)} className="flex-shrink-0 flex items-center gap-2 px-3 py-2 text-sm bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-lg shadow-sm border dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600">
+                                            <Plus className="w-4 h-4" />Tạo mẫu
+                                        </button>
+                                    </div>
                                 </div>
                                 <input type="file" ref={avatarInputRef} onChange={handleAvatarFileChange} accept="image/*" className="hidden" />
                                 <div>
@@ -332,6 +338,11 @@ const CVGeneratorPage: React.FC = () => {
                     </div>
                 </div>
             </main>
+            <TemplateSelector
+                isOpen={isTemplateBrowserOpen}
+                onClose={() => setIsTemplateBrowserOpen(false)}
+                onSelectTemplate={handleTemplateSelect}
+            />
             {isTemplateEditorOpen && <TemplateEditor onClose={() => setIsTemplateEditorOpen(false)} onSave={handleSaveNewTemplate} />}
             <Footer />
         </div>

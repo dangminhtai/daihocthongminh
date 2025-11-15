@@ -58,3 +58,10 @@ export const getCVTemplates = (sortBy: 'popularity' | 'rating' | 'newest' = 'pop
 export const createCVTemplate = (templateData: Partial<CVTemplate>): Promise<CVTemplate> => {
     return apiClient.post<CVTemplate>('/api/cv-templates', templateData);
 };
+
+/**
+ * Đánh giá một mẫu CV
+ */
+export const rateCVTemplate = (templateId: string, rating: number): Promise<CVTemplate> => {
+    return apiClient.post<CVTemplate>(`/api/cv-templates/${templateId}/rate`, { rating });
+};
