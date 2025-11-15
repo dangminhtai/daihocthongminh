@@ -1,7 +1,7 @@
 import express from 'express';
 import { protect } from '../middleware/auth.middleware';
 import ChatHistory from '../models/chatHistory.model';
-import { getChatResponse } from '../services/gemini';
+import { getChatResponse } from '../services/chatAi.service';
 
 const router = express.Router();
 

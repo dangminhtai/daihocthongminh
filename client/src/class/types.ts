@@ -105,10 +105,28 @@ export interface CVProject {
   link?: string;
 }
 
+export interface CVTemplateStructure {
+  layout: 'classic' | 'modern';
+  sectionOrder: string[];
+}
+
+export interface CVTemplate {
+  _id: string;
+  name: string;
+  description?: string;
+  thumbnailUrl?: string;
+  structure: CVTemplateStructure;
+  createdBy: string | { _id: string; fullName: string };
+  isPublic: boolean;
+  usageCount: number;
+  averageRating: number;
+}
+
+
 export interface CVData {
   _id?: string;
   userId?: string;
-  template: string;
+  template: CVTemplate; // Luôn là object đầy đủ ở client
   personalDetails: {
     fullName: string;
     jobTitle: string;

@@ -3,10 +3,10 @@ import { protect } from '../middleware/auth.middleware';
 import Exploration from '../models/exploration.model';
 import { EXPLORATION_TYPES } from '../models/constants';
 import {
-    suggestMajorsForRoadmap as suggestMajorsFromAI,
-    suggestCareersForSubjects as suggestCareersFromAI,
-    getMajorDetails as getMajorDetailsFromAI
-} from '../services/gemini';
+    suggestMajorsForRoadmap,
+    suggestCareersForSubjects,
+    getMajorDetails
+} from '../services/explorationAi.service';
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.post('/suggest-majors', protect, async (req, res) => {
     if (!roadmapName) return res.status(400).json({ message: "Thiếu roadmapName" });
 
     try {
-        const suggestions = await suggestMajorsFromAI(roadmapName);
+        const suggestions = await suggestMajorsForRoadmap(roadmapName);
 
         const exploration = new Exploration({
             userId: req.user!._id,
@@ -40,7 +40,7 @@ router.post('/suggest-careers', protect, async (req, res) => {
     }
 
     try {
-        const suggestions = await suggestCareersFromAI(subjectNames);
+        const suggestions = await suggestCareersForSubjects(subjectNames);
 
         const exploration = new Exploration({
             userId: req.user!._id,
@@ -62,7 +62,7 @@ router.post('/major-details', protect, async (req, res) => {
     if (!majorName) return res.status(400).json({ message: "Thiếu majorName" });
 
     try {
-        const details = await getMajorDetailsFromAI(majorName);
+        const details = await getMajorDetails(majorName);
         res.status(200).json(details);
     } catch (error: any) {
         res.status(500).json({ message: error.message || "Lỗi server" });

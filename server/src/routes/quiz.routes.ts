@@ -2,9 +2,9 @@ import express from 'express';
 import { protect } from '../middleware/auth.middleware';
 import QuizResult from '../models/quizResult.model';
 import {
-    generateNextQuizQuestion as generateNextQuestionFromAI,
-    getQuizRecommendations as getRecommendationsFromAI
-} from '../services/gemini';
+    generateNextQuizQuestion,
+    getQuizRecommendations
+} from '../services/quizAi.service';
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.post('/next-question', protect, async (req, res) => {
     }
 
     try {
-        const nextStep = await generateNextQuestionFromAI(history);
+        const nextStep = await generateNextQuizQuestion(history);
         res.status(200).json(nextStep);
     } catch (error: any) {
         res.status(500).json({ message: error.message || "Lỗi server khi tạo câu hỏi" });
@@ -30,7 +30,7 @@ router.post('/recommendations', protect, async (req, res) => {
         return res.status(400).json({ message: 'Lịch sử trả lời không được rỗng' });
     }
     try {
-        const recommendations = await getRecommendationsFromAI(history);
+        const recommendations = await getQuizRecommendations(history);
 
         const newQuizResult = new QuizResult({
             userId: req.user!._id,

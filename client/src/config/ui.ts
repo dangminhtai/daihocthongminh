@@ -66,6 +66,7 @@ export const UI_MESSAGES = {
     SAVE_STATUS_IDLE: "",
     SAVE_STATUS_SAVING: "Đang lưu...",
     SAVE_STATUS_SAVED: "Đã lưu ✓",
+    TEMPLATE_SECTION_TITLE: "Chọn giao diện",
   },
 
   // Common

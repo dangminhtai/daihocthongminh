@@ -3,7 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// import path from 'path'; // Không cần thiết nữa
+import path from 'path'; // Import lại path
 
 // Import các file routes
 import authRoutes from './routes/auth.routes';
@@ -14,6 +14,7 @@ import userRoutes from './routes/user.routes'; // Import route người dùng m�
 import settingsRoutes from './routes/settings.routes'; // Import route cài đặt mới
 import ratingRoutes from './routes/rating.routes'; // Import route đánh giá mới
 import cvRoutes from './routes/cv.routes'; // Import route CV mới
+import cvTemplateRoutes from './routes/cvTemplate.routes'; // Import route template CV mới
 
 dotenv.config();
 
@@ -22,11 +23,11 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors()); // Cho phép cross-origin requests
-app.use(express.json()); // **Rất quan trọng**: để parse JSON body từ request
-app.use(express.urlencoded({ extended: true })); // **FIX**: Thêm middleware để xử lý form data
+app.use(express.json({ limit: '10mb' })); // Tăng giới hạn JSON body
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Tăng giới hạn form data
 
-// Phục vụ các file tĩnh từ thư mục 'public' - ĐÃ BỎ
-// app.use('/public', express.static(path.join(__dirname, '../../public')));
+// Phục vụ các file tĩnh từ thư mục 'public'
+app.use('/public', express.static(path.join(__dirname, '../../public')));
 
 
 // --- Kiểm tra các biến môi trường quan trọng ---
@@ -60,6 +61,7 @@ app.use('/api/users', userRoutes); // Sử dụng route người dùng
 app.use('/api/settings', settingsRoutes); // Sử dụng route cài đặt
 app.use('/api/ratings', ratingRoutes); // Sử dụng route đánh giá mới
 app.use('/api/cv', cvRoutes); // Sử dụng route CV mới
+app.use('/api/cv-templates', cvTemplateRoutes); // Sử dụng route template CV
 
 
 app.listen(port, () => {
