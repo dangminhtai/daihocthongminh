@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './pages/ProfilePage'; // Import trang Profile
 import './App.css';
 import { IUser } from './class/types';
 
@@ -22,7 +23,7 @@ function App() {
     return null;
   });
 
-  const handleLoginSuccess = (user: IUser) => {
+  const handleUserUpdate = (user: IUser) => {
     localStorage.setItem('currentUser', JSON.stringify(user));
     setCurrentUser(user);
   };
@@ -38,20 +39,22 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <header className="App-header">
-          <Routes>
-            <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
-            <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
-            <Route
-              path="/login"
-              element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleLoginSuccess} />}
-            />
-            <Route
-              path="/home"
-              element={isLoggedIn ? <HomePage onLogout={handleLogout} currentUser={currentUser} /> : <Navigate to="/login" />}
-            />
-          </Routes>
-        </header>
+        <Routes>
+          <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
+          <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
+          <Route
+            path="/login"
+            element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleUserUpdate} />}
+          />
+          <Route
+            path="/home"
+            element={isLoggedIn ? <HomePage onLogout={handleLogout} currentUser={currentUser} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/profile"
+            element={isLoggedIn ? <ProfilePage currentUser={currentUser!} onUpdateUser={handleUserUpdate} onLogout={handleLogout} /> : <Navigate to="/login" />}
+          />
+        </Routes>
       </div>
     </BrowserRouter>
   );

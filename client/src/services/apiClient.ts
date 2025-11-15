@@ -51,6 +51,40 @@ const apiClient = {
         return handleResponse<T>(response);
     },
 
+    async put<T>(endpoint: string, body: object): Promise<T> {
+        const token = localStorage.getItem('token');
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json',
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(body),
+        });
+
+        return handleResponse<T>(response);
+    },
+
+    async upload<T>(endpoint: string, formData: FormData): Promise<T> {
+        const token = localStorage.getItem('token');
+        const headers: HeadersInit = {}; // Browser sẽ tự set Content-Type
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers,
+            body: formData,
+        });
+
+        return handleResponse<T>(response);
+    },
+
     async delete<T>(endpoint: string): Promise<T> {
         const token = localStorage.getItem('token');
         const headers: HeadersInit = {

@@ -8,6 +8,11 @@ export interface IUser extends Document {
     mssv?: string;
     userId: string;
     avatarUrl: string;
+    department?: string; // Khoa
+    class?: string; // Lớp
+    dateOfBirth?: Date; // Ngày sinh
+    phoneNumber?: string; // Số điện thoại
+    bio?: string; // Mô tả ngắn
 }
 
 const UserSchema = new Schema<IUser>(
@@ -17,6 +22,11 @@ const UserSchema = new Schema<IUser>(
         mssv: { type: String },
         userId: { type: String, required: true, unique: true },
         avatarUrl: { type: String, required: true },
+        department: { type: String, required: false },
+        class: { type: String, required: false },
+        dateOfBirth: { type: Date, required: false },
+        phoneNumber: { type: String, required: false },
+        bio: { type: String, required: false },
     },
     { timestamps: true }
 );

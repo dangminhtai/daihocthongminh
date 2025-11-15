@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChatService, ChatMessage } from '../services/chatService';
 import { ERROR_MESSAGES } from '../config/errors';
 import LoadingSpinner from './common/LoadingSpinner';
+import ConfirmModal from './common/ConfirmModal'; // Import component mới
 import { Send, X, MessageCircle, Trash2 } from 'lucide-react';
 
 const ChatBot: React.FC = () => {
@@ -10,6 +11,7 @@ const ChatBot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State cho modal
   const hasFetchedHistory = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,16 +75,18 @@ const ChatBot: React.FC = () => {
     }
   }, [input, isLoading, channelId]);
 
-  const handleClear = async () => {
-    if (window.confirm('Bạn có chắc muốn xóa toàn bộ lịch sử trò chuyện?')) {
-      try {
-        await ChatService.clearHistory(channelId);
-        setMessages([]);
-        setError(null);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
-        setError(errorMessage);
-      }
+  const handleClear = () => {
+    setIsConfirmModalOpen(true); // Mở modal xác nhận tùy chỉnh
+  };
+
+  const handleConfirmClear = async () => {
+    try {
+      await ChatService.clearHistory(channelId);
+      setMessages([]);
+      setError(null);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
+      setError(errorMessage);
     }
   };
 
@@ -116,63 +120,72 @@ const ChatBot: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
-      <div className="bg-indigo-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          <h3 className="font-semibold">Trợ lý AI định hướng</h3>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleClear} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Xóa lịch sử" title="Xóa lịch sử">
-            <Trash2 className="h-4 w-4" />
-          </button>
-          <button onClick={handleToggleOpen} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Đóng chat">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.length === 0 && !isLoading && !error && (
-          <div className="text-center text-gray-500 mt-8 flex flex-col items-center">
-            <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-            <p>Chào bạn! Tôi có thể giúp gì cho bạn về định hướng nghề nghiệp?</p>
+    <>
+      <div className="fixed bottom-6 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
+        <div className="bg-indigo-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" />
+            <h3 className="font-semibold">Trợ lý AI định hướng</h3>
           </div>
-        )}
+          <div className="flex items-center gap-2">
+            <button onClick={handleClear} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Xóa lịch sử" title="Xóa lịch sử">
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button onClick={handleToggleOpen} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Đóng chat">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
 
-        {messages.map((msg, index) => (
-          <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}`}>
-              <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {messages.length === 0 && !isLoading && !error && (
+            <div className="text-center text-gray-500 mt-8 flex flex-col items-center">
+              <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+              <p>Chào bạn! Tôi có thể giúp gì cho bạn về định hướng nghề nghiệp?</p>
             </div>
-          </div>
-        ))}
+          )}
 
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-white rounded-lg p-3 border border-gray-200">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
-                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 border border-gray-200'}`}>
+                <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
               </div>
             </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-white rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {error && (<div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div>)}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="p-4 border-t border-gray-200 bg-white rounded-b-lg">
+          <div className="flex gap-2">
+            <input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Nhập câu hỏi của bạn..." className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled={isLoading} />
+            <button onClick={handleSend} disabled={!input.trim() || isLoading} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center w-12">
+              {isLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <Send className="h-5 w-5" />}
+            </button>
           </div>
-        )}
-
-        {error && (<div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div>)}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="p-4 border-t border-gray-200 bg-white rounded-b-lg">
-        <div className="flex gap-2">
-          <input ref={inputRef} type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Nhập câu hỏi của bạn..." className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled={isLoading} />
-          <button onClick={handleSend} disabled={!input.trim() || isLoading} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center w-12">
-            {isLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <Send className="h-5 w-5" />}
-          </button>
         </div>
       </div>
-    </div>
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmClear}
+        title="Xác nhận xóa lịch sử"
+        message="Bạn có chắc chắn muốn xóa toàn bộ lịch sử cuộc trò chuyện này không? Hành động này không thể hoàn tác."
+      />
+    </>
   );
 };
 

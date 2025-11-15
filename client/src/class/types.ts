@@ -1,4 +1,3 @@
-
 import type { ElementType } from 'react';
 
 export type View = 'home' | 'roadmap' | 'careerPath' | 'quiz';
@@ -65,4 +64,9 @@ export interface IUser {
   userId: string;
   avatarUrl: string;
   mssv?: string;
+  department?: string; // Khoa
+  class?: string; // Lớp
+  dateOfBirth?: string; // Ngày sinh
+  phoneNumber?: string; // Số điện thoại
+  bio?: string; // Mô tả ngắn
 }

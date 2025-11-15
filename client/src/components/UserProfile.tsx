@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, User, Settings } from 'lucide-react';
 import { IUser } from '../class/types';
+import { Link } from 'react-router-dom';
 
 interface UserProfileProps {
     user: IUser;
@@ -84,7 +85,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
                             </div>
                         </div>
                         <div className="p-2 space-y-1">
-                            <MenuItem icon={<User className="w-4 h-4 text-gray-500" />} text="Hồ sơ của bạn" />
+                            <Link to="/profile" className="block">
+                                <MenuItem icon={<User className="w-4 h-4 text-gray-500" />} text="Hồ sơ của bạn" />
+                            </Link>
                             <MenuItem icon={<Settings className="w-4 h-4 text-gray-500" />} text="Cài đặt" />
                         </div>
                         <div className="border-t border-gray-100 my-1"></div>
