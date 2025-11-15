@@ -1,0 +1,41 @@
+/* (Giữ lại các style mặc định) */
+
+.item-form {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.item-form input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.item-form button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: #61dafb;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.item-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  max-width: 500px;
+  width: 100%;
+}
+
+.item-list li {
+  background-color: #3e4450;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: #ff6b6b;
+}
