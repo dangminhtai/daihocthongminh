@@ -1,4 +1,4 @@
-# HACKATHON HCMUTE với chủ đề "Đại học thông minh - nâng tầm giáo dục\*\*
+# HACKATHON HCMUTE với chủ đề "Đại học thông minh - nâng tầm giáo dục"
 
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/) [![Node.js](https://img.shields.io/badge/Node.js-20.x-green?logo=nodedotjs)](https://nodejs.org/) [![Vite](https://img.shields.io/badge/Vite-7.x-purple?logo=vite)](https://vitejs.dev/) [![MongoDB](https://img.shields.io/badge/MongoDB-green?logo=mongodb)](https://www.mongodb.com/) [![Gemini AI](https://img.shields.io/badge/Gemini_AI-blueviolet?logo=google&logoColor=white)](https://ai.google.dev/)
 
@@ -199,6 +199,41 @@ Dự án này được cấp phép theo Giấy phép MIT.
 
 ## 📧 Liên Hệ
 
-Được tạo bởi team **Anh em Sài Gòn - Đội thi Hackathon HCMUTE** - [dmt826321@gmail.com](mailto:dmt826321@gmail.com)
-
+Được tạo bởi team **Anh em Sài Gòn - Đội thi Hackathon HCMUTE**
 Link dự án: [https://github.com/dangminhtai/daihocthongminh](https://github.com/dangminhtai/daihocthongminh)
+
+### Các thành viên trong đội
+
+#### 1. Đặng Minh Tài
+
+<p align="center">
+  <a href="mailto:dmt826321@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://facebook.com/tamidanopro"><img src="https://img.shields.io/badge/Facebook-1877F2?logo=facebook&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://github.com/dangminhtai"><img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
+</p>
+
+#### 2. Trần Minh Trọng Nhân
+
+<p align="center">
+  <a href="mailto:tranminhtrongnhan22072005@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white&style=for-the-badge"/></a>
+  <a href="facebook.com/tran.nhan.407057"><img src="https://img.shields.io/badge/Facebook-1877F2?logo=facebook&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://github.com/sibula227"><img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
+</p>
+
+#### 3. Nguyễn Thế Tân
+
+<p align="center">
+  <a href="mailto:23110152@student.hcmute.edu.vn"><img src="https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://www.facebook.com/tan.nguyenthe.52090"><img src="https://img.shields.io/badge/Facebook-1877F2?logo=facebook&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://github.com/iHateIT665"><img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
+</p>
+
+#### 4. Lưu Quang Tiến
+
+<p align="center">
+  <a href="mailto:23110157@student.hcmute.edu.vn"><img src="https://img.shields.io/badge/Gmail-D14836?logo=gmail&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://web.facebook.com/profile.php?id=100082150637852&locale=vi_VN"><img src="https://img.shields.io/badge/Facebook-1877F2?logo=facebook&logoColor=white&style=for-the-badge"/></a>
+  <a href="https://github.com/LuuQuangTien"><img src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
+</p>
+
+> Thả 1 star ⭐ nếu cảm thấy dự án này hữu ích nhé!

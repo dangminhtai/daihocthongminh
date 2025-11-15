@@ -116,7 +116,11 @@ router.post('/register', async (req: Request, res: Response) => {
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newLogin = new Login({ gmail, mssv: role === 'student' ? mssv : undefined, password: hashedPassword });
+       const newLogin = new Login({ 
+        gmail, 
+        mssv: role === 'student' ? mssv : undefined, 
+        password: hashedPassword 
+    });
         const savedLogin = await newLogin.save();
 
         const userId = await generateUniqueUserId();
