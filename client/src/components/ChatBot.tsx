@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChatService, ChatMessage } from '../services/chatService';
 import { ERROR_MESSAGES } from '../config/errors';
@@ -14,8 +13,7 @@ const ChatBot: React.FC = () => {
   const hasFetchedHistory = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  const userId = 'default-user';
+
   const channelId = 'career-guidance';
 
   useEffect(() => {
@@ -26,22 +24,23 @@ const ChatBot: React.FC = () => {
     if (isOpen && !hasFetchedHistory.current) {
       const fetchHistory = async () => {
         setIsLoading(true);
+        setError(null);
         try {
-          const history = await ChatService.getHistory(userId, channelId);
+          const history = await ChatService.getHistory(channelId);
           setMessages(history);
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
           setError(errorMessage);
         } finally {
           setIsLoading(false);
-          hasFetchedHistory.current = true; // Mark as fetched
+          hasFetchedHistory.current = true;
         }
       };
 
       fetchHistory();
       inputRef.current?.focus();
     }
-  }, [isOpen, userId, channelId]);
+  }, [isOpen, channelId]);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
@@ -59,27 +58,25 @@ const ChatBot: React.FC = () => {
     setError(null);
 
     try {
-      const response = await ChatService.sendMessage(userId, channelId, currentInput);
+      const response = await ChatService.sendMessage(channelId, currentInput);
       const modelMessage: ChatMessage = { text: response, role: 'model', timestamp: new Date() };
-      setMessages(prev => [...prev, modelMessage]);
+      // Cập nhật lại state sau khi nhận được phản hồi
+      setMessages(prev => [...prev.filter(m => m !== userMessage), userMessage, modelMessage]);
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
       setError(errorMessage);
-      // When a message fails to send, we should show an error but keep the user's message on screen
-      // so they can retry or copy the text.
-      // We will add the original user message back to the list.
-      setMessages(prev => [...prev.filter(m => m !== userMessage), userMessage]);
-      setError(errorMessage);
+      // Giữ lại tin nhắn của người dùng trên UI để họ có thể thử lại
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
     }
-  }, [input, isLoading, userId, channelId]);
+  }, [input, isLoading, channelId]);
 
   const handleClear = async () => {
     if (window.confirm('Bạn có chắc muốn xóa toàn bộ lịch sử trò chuyện?')) {
       try {
-        await ChatService.clearHistory(userId, channelId);
+        await ChatService.clearHistory(channelId);
         setMessages([]);
         setError(null);
       } catch (err) {
@@ -96,10 +93,20 @@ const ChatBot: React.FC = () => {
     }
   };
 
+  const handleToggleOpen = () => {
+    const nextIsOpen = !isOpen;
+    setIsOpen(nextIsOpen);
+    if (!nextIsOpen) {
+      // Reset history fetch flag when closing
+      hasFetchedHistory.current = false;
+    }
+  }
+
+
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={handleToggleOpen}
         className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 z-50 animate-bounce"
         aria-label="Mở chat"
       >
@@ -119,7 +126,7 @@ const ChatBot: React.FC = () => {
           <button onClick={handleClear} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Xóa lịch sử" title="Xóa lịch sử">
             <Trash2 className="h-4 w-4" />
           </button>
-          <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Đóng chat">
+          <button onClick={handleToggleOpen} className="p-1 hover:bg-indigo-700 rounded transition-colors" aria-label="Đóng chat">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -127,8 +134,9 @@ const ChatBot: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
         {messages.length === 0 && !isLoading && !error && (
-          <div className="text-center text-gray-500 mt-8">
-            {/* The initial state is now handled by the history fetch attempt */}
+          <div className="text-center text-gray-500 mt-8 flex flex-col items-center">
+            <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+            <p>Chào bạn! Tôi có thể giúp gì cho bạn về định hướng nghề nghiệp?</p>
           </div>
         )}
 
@@ -152,7 +160,7 @@ const ChatBot: React.FC = () => {
           </div>
         )}
 
-        {error && ( <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div> )}
+        {error && (<div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm"> {error} </div>)}
         <div ref={messagesEndRef} />
       </div>
 

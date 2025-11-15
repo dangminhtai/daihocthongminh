@@ -2,7 +2,7 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../components/common/Input';
-import { UserIcon, LockIcon, IdCardIcon } from '../components/Icons';
+import { UserIcon, LockIcon, IdCardIcon, EnvelopeIcon } from '../components/icons';
 
 const RegisterPage: React.FC = () => {
     const [fullName, setFullName] = useState('');
@@ -19,7 +19,7 @@ const RegisterPage: React.FC = () => {
         setSuccess(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
+            const response = await fetch('/api/auth/register', { // SỬ DỤNG PROXY
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullName, mssv, gmail, password }),
@@ -58,7 +58,7 @@ const RegisterPage: React.FC = () => {
                     placeholder="Type your email"
                     value={gmail}
                     onChange={(e) => setGmail(e.target.value)}
-                    icon={<UserIcon className="w-5 h-5" />}
+                    icon={<EnvelopeIcon className="w-5 h-5" />}
                 />
                 <Input
                     id="mssv"

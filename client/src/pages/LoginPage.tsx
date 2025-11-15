@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Input from '../components/common/Input';
 import SocialButton from '../components/common/SocialButton';
-import { UserIcon, LockIcon, FacebookIcon, TwitterIcon, GoogleIcon } from '../components/Icons';
+import { UserIcon, LockIcon, FacebookIcon, TwitterIcon, GoogleIcon } from '../components/icons';
 
 interface LoginPageProps {
     onLoginSuccess: () => void; // giữ callback cập nhật isLoggedIn
@@ -21,7 +21,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch('/api/auth/login', { // SỬ DỤNG PROXY
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ gmail, password }),
