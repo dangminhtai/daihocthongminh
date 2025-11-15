@@ -1,7 +1,7 @@
+
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/user.model';
-import { Login } from '../models/login.model';
 
 // Mở rộng kiểu Request của Express để chứa thuộc tính user
 declare global {
@@ -20,22 +20,17 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
             // Lấy token từ header
             token = req.headers.authorization.split(' ')[1];
 
-            // Xác thực token
+            // Xác thực token và lấy payload (chứa _id của User)
             const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
 
-            // Tìm thông tin đăng nhập từ token
-            const loginInfo = await Login.findById(decoded.id).select('-password');
-            if (!loginInfo) {
-                return res.status(401).json({ message: 'Không được phép, token không hợp lệ' });
-            }
+            // Tìm người dùng trực tiếp bằng _id từ token
+            const user = await User.findById(decoded.id);
 
-            // Tìm người dùng tương ứng
-            const user = await User.findOne({ loginID: loginInfo._id });
             if (!user) {
                 return res.status(401).json({ message: 'Không được phép, người dùng không tồn tại' });
             }
 
-            // Gắn đối tượng user vào request
+            // Gắn đối tượng user vào request để các route sau có thể sử dụng
             req.user = user;
             next();
         } catch (error) {

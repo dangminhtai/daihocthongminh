@@ -6,14 +6,15 @@ import CareerPathfinder from '../components/CareerPathfinder';
 import Quiz from '../components/Quiz'; // Import component mới
 import Header from '../components/Header';
 import ChatBot from '../components/ChatBot';
-import { View } from '../class/types';
+import { View, IUser } from '../class/types';
 import { UI_MESSAGES } from '../config/ui';
 
 interface HomePageProps {
     onLogout: () => void;
+    currentUser: IUser | null;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onLogout }) => {
+const HomePage: React.FC<HomePageProps> = ({ onLogout, currentUser }) => {
     const [currentView, setCurrentView] = useState<{ view: View; payload?: any }>({ view: 'home' });
 
     const navigateTo = useCallback((view: View, payload?: any) => {
@@ -39,7 +40,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogout }) => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Header onLogout={onLogout} />
+            <Header onLogout={onLogout} currentUser={currentUser} />
             <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
                 <div className="max-w-5xl mx-auto">
                     {renderContent()}

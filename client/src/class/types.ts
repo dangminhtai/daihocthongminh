@@ -58,3 +58,11 @@ export interface QuizRecommendation {
   suitability: string;
   suggestedMajors: string[];
 }
+
+export interface IUser {
+  _id: string;
+  fullName: string;
+  userId: string;
+  avatarUrl: string;
+  mssv?: string;
+}

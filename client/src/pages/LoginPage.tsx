@@ -1,3 +1,4 @@
+
 // LoginPage.tsx
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -5,9 +6,10 @@ import { motion } from 'framer-motion';
 import Input from '../components/common/Input';
 import SocialButton from '../components/common/SocialButton';
 import { UserIcon, LockIcon, FacebookIcon, TwitterIcon, GoogleIcon } from '../components/icons';
+import { IUser } from '../class/types';
 
 interface LoginPageProps {
-    onLoginSuccess: () => void; // giữ callback cập nhật isLoggedIn
+    onLoginSuccess: (user: IUser) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
@@ -33,15 +35,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 throw new Error(data.message || 'Đăng nhập thất bại');
             }
 
-            if (data.token) {
+            if (data.token && data.user) {
                 localStorage.setItem('token', data.token);
-                onLoginSuccess();
+                onLoginSuccess(data.user);
+                // navigate('/home') sẽ tự động xảy ra do App.tsx re-render
+            } else {
+                throw new Error('Phản hồi không hợp lệ từ máy chủ');
             }
 
-            // Delay nhỏ cho animation
-            await new Promise((res) => setTimeout(res, 150));
-
-            navigate('/home');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Lỗi không xác định');
         }

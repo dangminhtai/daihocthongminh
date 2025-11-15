@@ -5,33 +5,50 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import './App.css';
+import { IUser } from './class/types';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [currentUser, setCurrentUser] = useState<IUser | null>(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    const token = localStorage.getItem('token');
+    if (storedUser && token) {
+      try {
+        return JSON.parse(storedUser);
+      } catch (error) {
+        localStorage.clear();
+        return null;
+      }
+    }
+    return null;
+  });
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
+  const handleLoginSuccess = (user: IUser) => {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    setCurrentUser(user);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsLoggedIn(false);
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
   };
+
+  const isLoggedIn = !!currentUser;
 
   return (
     <BrowserRouter>
       <div className="App">
         <header className="App-header">
           <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
+            <Route path="/register" element={isLoggedIn ? <Navigate to="/home" /> : <RegisterPage />} />
             <Route
               path="/login"
               element={isLoggedIn ? <Navigate to="/home" /> : <LoginPage onLoginSuccess={handleLoginSuccess} />}
             />
             <Route
               path="/home"
-              element={isLoggedIn ? <HomePage onLogout={handleLogout} /> : <Navigate to="/login" />}
+              element={isLoggedIn ? <HomePage onLogout={handleLogout} currentUser={currentUser} /> : <Navigate to="/login" />}
             />
           </Routes>
         </header>

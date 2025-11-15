@@ -1,13 +1,16 @@
 
 import React from 'react';
 import { UI_MESSAGES } from '../config/ui';
-import { GraduationCap, LogOut } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
+import UserProfile from './UserProfile';
+import { IUser } from '../class/types';
 
 interface HeaderProps {
   onLogout: () => void;
+  currentUser: IUser | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onLogout, currentUser }) => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -18,13 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           </h1>
         </div>
         <div>
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors duration-200"
-          >
-            <LogOut className="h-4 w-4" />
-            Đăng xuất
-          </button>
+          {currentUser && <UserProfile user={currentUser} onLogout={onLogout} />}
         </div>
       </div>
     </header>
