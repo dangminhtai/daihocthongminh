@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UI_MESSAGES } from '../config/ui';
 import { GraduationCap } from 'lucide-react';
@@ -12,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLogout, currentUser }) => {
   return (
-    <header className="bg-white dark:bg-slate-800 shadow-sm dark:shadow-md sticky top-0 z-40 border-b border-gray-200 dark:border-slate-700">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center">
           <GraduationCap className="h-8 w-8 text-indigo-600 dark:text-indigo-400 mr-3" />

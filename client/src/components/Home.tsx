@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View } from '../class/types';
 import { UI_MESSAGES } from '../config/ui';
@@ -62,7 +61,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white/20 text-white mb-5">
               <Rocket className="h-8 w-8" />
             </div>
-            <h3 className="text-2xl font-bold">{UI_MESSAGES.HOME.QUIZ_TITLE}</h3>
+            <h3 className="text-2xl font-bold text-white">{UI_MESSAGES.HOME.QUIZ_TITLE}</h3>
             <p className="mt-2 text-base text-indigo-100 max-w-lg">
               {UI_MESSAGES.HOME.QUIZ_DESCRIPTION}
             </p>

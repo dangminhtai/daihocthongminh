@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChatService, ChatMessage } from '../services/chatService';
 import { ERROR_MESSAGES } from '../config/errors';
@@ -112,7 +111,7 @@ const ChatBot: React.FC = () => {
     return (
       <button
         onClick={handleToggleOpen}
-        className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 z-50 animate-bounce"
+        className="fixed bottom-6 right-6 bg-indigo-600 dark:bg-indigo-700 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-all duration-300 z-50 animate-bounce"
         aria-label="Mở chat"
       >
         <MessageCircle className="h-6 w-6" />
