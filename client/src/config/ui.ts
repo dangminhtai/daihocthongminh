@@ -11,7 +11,7 @@ export const UI_MESSAGES = {
     BUTTON_LOADING: "Đang phân tích...",
     BUTTON_DEFAULT: "Nhận gợi ý từ AI",
   },
-  
+
   // Roadmap Selector
   ROADMAP_SELECTOR: {
     TITLE: "Chọn một Lộ trình học tập",
@@ -19,31 +19,39 @@ export const UI_MESSAGES = {
     RESULT_TITLE: "Gợi ý chuyên ngành cho lộ trình",
     CORE_SKILLS_LABEL: "Kỹ năng cốt lõi:",
   },
-  
+
+  // Quiz
+  QUIZ: {
+    TITLE: "Trắc nghiệm Khám phá Bản thân",
+    DESCRIPTION: "Hãy trả lời một vài câu hỏi để AI hiểu rõ hơn về sở thích và tính cách của bạn.",
+    BUTTON_NEXT: "Tiếp theo",
+    BUTTON_SUBMIT: "Xem kết quả",
+    OTHER_PLACEHOLDER: "Vui lòng nhập cụ thể...",
+    RESULT_TITLE: "Kết quả dành cho bạn",
+    RESULT_DESCRIPTION: "Dựa trên các câu trả lời của bạn, đây là những định hướng nghề nghiệp mà AI cho rằng phù hợp nhất:",
+  },
+
   // Home
   HOME: {
-    WELCOME_TITLE: "Chào mừng bạn!",
-    WELCOME_DESCRIPTION: "Trợ lý AI này sẽ giúp bạn khám phá con đường học tập và sự nghiệp phù hợp nhất với bản thân.",
-    USER_QUESTION: "Hãy cho chúng tôi biết bạn là ai:",
-    NO_MAJOR_TITLE: "Tôi chưa có chuyên ngành",
-    NO_MAJOR_DESCRIPTION: "Khám phá các lộ trình học tập và nhận gợi ý chuyên ngành phù hợp từ AI.",
-    HAS_MAJOR_TITLE: "Tôi đã có chuyên ngành",
-    HAS_MAJOR_DESCRIPTION: "Tìm kiếm định hướng nghề nghiệp dựa trên các môn học bạn yêu thích.",
-    START_ACTION: "Bắt đầu →",
-    EXPLORE_ACTION: "Khám phá →",
+    QUIZ_TITLE: "Trắc nghiệm AI Khám phá",
+    QUIZ_DESCRIPTION: "Chưa biết bắt đầu từ đâu? Trả lời vài câu hỏi nhanh để AI gợi ý chuyên ngành, nghề nghiệp phù hợp.",
+    ROADMAP_TITLE: "Khám phá Lộ trình",
+    ROADMAP_DESCRIPTION: "Duyệt qua các khối ngành lớn như Công nghệ, Kinh doanh, Nghệ thuật...",
+    SUBJECTS_TITLE: "Tìm theo Môn học",
+    SUBJECTS_DESCRIPTION: "Đã biết mình học tốt môn nào? Để AI gợi ý nghề nghiệp từ đó.",
   },
-  
+
   // Header
   HEADER: {
     TITLE: "Đại học",
     TITLE_HIGHLIGHT: "Thông minh",
   },
-  
+
   // Footer
   FOOTER: {
     COPYRIGHT: "© 2024 Đại học Thông minh. Phát triển bởi chuyên gia AI.",
   },
-  
+
   // Common
   COMMON: {
     GENERIC_ERROR: "Đã xảy ra lỗi không xác định",

@@ -1,7 +1,7 @@
-// FIX: Import `ElementType` from `react` to resolve the `Cannot find namespace 'React'` error.
+
 import type { ElementType } from 'react';
 
-export type View = 'home' | 'roadmap' | 'careerPath';
+export type View = 'home' | 'roadmap' | 'careerPath' | 'quiz';
 
 export interface Roadmap {
   id: string;
@@ -33,4 +33,24 @@ export interface MajorDetails {
   electiveSubjects: string[];
   curriculumRoadmap: string[];
   careerOrientations: string[];
+}
+
+// Các kiểu dữ liệu mới cho Trắc nghiệm
+export interface QuizOption {
+  text: string;
+  nextQuestion: string | null;
+  payload: string;
+  requiresInput?: boolean;
+}
+
+export interface QuizQuestion {
+  question: string;
+  options: QuizOption[];
+}
+
+export interface QuizRecommendation {
+  careerName: string;
+  description: string;
+  suitability: string;
+  suggestedMajors: string[];
 }

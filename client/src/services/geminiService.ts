@@ -1,9 +1,11 @@
+
 import { GoogleGenAI } from "@google/genai";
-import { MajorSuggestion, CareerSuggestion, MajorDetails } from '../class/types';
+import { MajorSuggestion, CareerSuggestion, MajorDetails, QuizRecommendation } from '../class/types';
 import { geminiMajorPrompt } from '../config/prompt/majors/gemini_conf';
 import { geminiCareerPrompt } from '../config/prompt/careers/gemini_conf';
 import { geminiMajorDetailsPrompt } from '../config/prompt/majors/gemini_details_conf';
 import { geminiFactPrompt } from "../config/prompt/facts_conf";
+import { geminiQuizPrompt } from "../config/prompt/quiz_conf";
 import { ERROR_MESSAGES, ERROR_LOG_MESSAGES } from '../config/errors';
 
 // Initialize API key
@@ -122,5 +124,34 @@ export const getCareerFact = async (): Promise<string> => {
     console.error("Lỗi khi lấy sự thật thú vị:", error);
     // Trả về một sự thật dự phòng để không làm hỏng giao diện
     return "Việt Nam là một trong những quốc gia xuất khẩu phần mềm hàng đầu trong khu vực Đông Nam Á.";
+  }
+};
+
+/**
+ * Gợi ý nghề nghiệp dựa trên kết quả trắc nghiệm
+ * @param answers - Mảng các câu trả lời của người dùng
+ * @returns Danh sách gợi ý nghề nghiệp được cá nhân hóa
+ */
+export const getQuizRecommendations = async (answers: { question: string, answer: string }[]): Promise<QuizRecommendation[]> => {
+  try {
+    if (!apiKey) {
+      throw new Error(ERROR_MESSAGES.API_KEY_NOT_CONFIGURED);
+    }
+
+    const answersText = answers.map(a => `- ${a.question}: ${a.answer}`).join('\n');
+
+    const response = await ai.models.generateContent({
+      model: geminiQuizPrompt.model,
+      contents: geminiQuizPrompt.contents.replace("{{answers}}", answersText),
+      config: geminiQuizPrompt.resSchema,
+    });
+
+    const jsonText = response.text.trim();
+    const recommendations: QuizRecommendation[] = JSON.parse(jsonText);
+    return recommendations;
+  } catch (error: any) {
+    console.error("Lỗi khi gọi Gemini API để gợi ý từ trắc nghiệm:", error);
+    const errorMessage = error?.message || "Không thể nhận được gợi ý. Vui lòng thử lại.";
+    throw new Error(errorMessage);
   }
 };

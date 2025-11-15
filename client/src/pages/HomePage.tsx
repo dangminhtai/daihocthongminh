@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react';
 import Home from '../components/Home';
 import RoadmapSelector from '../components/RoadmapSelector';
 import CareerPathfinder from '../components/CareerPathfinder';
+import Quiz from '../components/Quiz'; // Import component mới
 import Header from '../components/Header';
 import ChatBot from '../components/ChatBot';
 import { View } from '../class/types';
@@ -28,6 +29,8 @@ const HomePage: React.FC<HomePageProps> = ({ onLogout }) => {
                 />;
             case 'careerPath':
                 return <CareerPathfinder onBack={() => navigateTo('home')} />;
+            case 'quiz': // Thêm case cho quiz
+                return <Quiz onBack={() => navigateTo('home')} />;
             case 'home':
             default:
                 return <Home onNavigate={navigateTo} />;
