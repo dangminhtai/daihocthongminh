@@ -1,0 +1,33 @@
+Dạ vâng, anh cần cập nhật **mục Khởi chạy** trong README để hướng dẫn chạy **chung 1 lệnh ở project-root** thay vì mở 2 terminal riêng cho client và server.
+
+Ví dụ chỉnh lại:
+
+---
+
+### 2. Chạy Dự Án Cùng Lúc (1 Terminal)
+
+1. **Cài đặt `concurrently`** (nếu chưa có) tại project-root:
+
+```bash
+npm install --save-dev concurrently
+```
+
+2. **Thêm script trong `package.json` root**:
+
+```json
+"scripts": {
+  "dev": "concurrently \"npm:start --prefix server\" \"npm:dev --prefix client\""
+}
+```
+
+3. **Chạy 1 lệnh duy nhất:**
+
+```bash
+npm run dev
+```
+
+Ứng dụng sẽ khởi chạy đồng thời cả server (`http://localhost:5000`) và client (Vite thường dùng `http://localhost:3000`) trong cùng 1 terminal.
+
+---
+
+Phần README hiện tại anh có thể thay mục **3. Chạy server** và **3. Chạy client** bằng hướng dẫn trên để người dùng mới không phải mở 2 terminal nữa.
