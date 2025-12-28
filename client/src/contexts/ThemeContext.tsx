@@ -49,7 +49,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     applyTheme(theme); // Áp dụng theme hiện tại lên DOM
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     // Hàm xử lý khi theme hệ thống thay đổi
     const handleChange = () => {
       // Chỉ áp dụng lại nếu người dùng đang ở chế độ 'system'
@@ -67,7 +67,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setTheme = useCallback((newTheme: Theme) => {
     // 1. Cập nhật state nội bộ của React
     rawSetTheme(newTheme);
-    
+
     // 2. Lưu cài đặt mới vào backend (nếu đã đăng nhập)
     const token = localStorage.getItem('token');
     if (token) {
