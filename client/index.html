@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./src/assets/react.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UTE - Orie - Trợ lý định hướng tương lai</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-          }
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./src/assets/react.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTE - Orie - Trợ lý định hướng tương lai</title>
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
         }
       }
-    </script>
-    <style>
-      @import url("https://rsms.me/inter/inter.css");
+    }
+  </script>
+  <style>
+    @import url("https://rsms.me/inter/inter.css");
 
-      body {
-        font-family: "Inter", sans-serif;
-      }
-    </style>
-    <script type="importmap">
+    body {
+      font-family: "Inter", sans-serif;
+    }
+  </style>
+  <script type="importmap">
       {
         "imports": {
           "react/": "https://aistudiocdn.com/react@^19.2.0/",
@@ -60,10 +61,11 @@
         }
       }
     </script>
-  </head>
+</head>
 
-  <body class="bg-slate-50 text-slate-900">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+<body class="bg-slate-50 text-slate-900">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
