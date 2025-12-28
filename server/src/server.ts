@@ -16,6 +16,8 @@ import ratingRoutes from './routes/rating.routes'; // Import route đánh giá m
 import cvRoutes from './routes/cv.routes'; // Import route CV mới
 import cvTemplateRoutes from './routes/cvTemplate.routes'; // Import route template CV mới
 import historyRoutes from './routes/history.routes'; // Import route lịch sử mới
+import Logger from './utils/logger';
+import { errorMiddleware } from './middleware/error.middleware';
 
 dotenv.config();
 
@@ -38,16 +40,16 @@ const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
 if (!mongoURI) {
-    console.error("FATAL ERROR: Biến môi trường MONGO_URI chưa được thiết lập.");
+    Logger.error("FATAL ERROR: Biến môi trường MONGO_URI chưa được thiết lập.");
     process.exit(1);
 }
 if (!jwtSecret) {
-    console.error("FATAL ERROR: Biến môi trường JWT_SECRET chưa được thiết lập. Đây là nguyên nhân gây ra lỗi 401 Unauthorized.");
+    Logger.error("FATAL ERROR: Biến môi trường JWT_SECRET chưa được thiết lập. Đây là nguyên nhân gây ra lỗi 401 Unauthorized.");
     process.exit(1);
 }
 if (!emailUser || !emailPass) {
-    console.warn("\nCẢNH BÁO: Các biến môi trường EMAIL_USER hoặc EMAIL_PASS chưa được thiết lập.");
-    console.warn("Chức năng gửi email (ví dụ: quên mật khẩu) sẽ không hoạt động và OTP sẽ được in ra console thay thế.\n");
+    Logger.warn("\nCẢNH BÁO: Các biến môi trường EMAIL_USER hoặc EMAIL_PASS chưa được thiết lập.");
+    Logger.warn("Chức năng gửi email (ví dụ: quên mật khẩu) sẽ không hoạt động và OTP sẽ được in ra console thay thế.\n");
 }
 // --- Kết thúc kiểm tra ---
 
@@ -55,9 +57,9 @@ if (!emailUser || !emailPass) {
 // Kết nối MongoDB
 mongoose.connect(mongoURI)
     .then(() => {
-        console.log('Đã kết nối thành công với MongoDB!');
+        Logger.success('Đã kết nối thành công với MongoDB!');
     })
-    .catch((error) => console.error('Lỗi kết nối MongoDB:', error));
+    .catch((error) => Logger.error('Lỗi kết nối MongoDB:', error));
 
 // Sử dụng routes
 app.use('/api/auth', authRoutes);
@@ -71,7 +73,10 @@ app.use('/api/cv', cvRoutes); // Sử dụng route CV mới
 app.use('/api/cv-templates', cvTemplateRoutes); // Sử dụng route template CV
 app.use('/api/history', historyRoutes); // Sử dụng route lịch sử
 
+// Global Error Handler
+app.use(errorMiddleware);
+
 
 app.listen(port, () => {
-    console.log(`Server đang chạy tại http://localhost:${port}`);
+    Logger.info(`Server đang chạy tại http://localhost:${port}`);
 });
