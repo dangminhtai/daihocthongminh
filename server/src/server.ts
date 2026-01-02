@@ -18,6 +18,7 @@ import cvTemplateRoutes from './routes/cvTemplate.routes'; // Import route templ
 import historyRoutes from './routes/history.routes'; // Import route lịch sử mới
 import Logger from './utils/logger';
 import { errorMiddleware } from './middleware/error.middleware';
+import VectorStoreService from './services/vectorStore.service';
 
 dotenv.config();
 
@@ -56,8 +57,11 @@ if (!emailUser || !emailPass) {
 
 // Kết nối MongoDB
 mongoose.connect(mongoURI)
-    .then(() => {
+    .then(async () => {
         Logger.success('Đã kết nối thành công với MongoDB!');
+
+        // Khởi tạo Knowledge Base sau khi DB đã kết nối
+        await VectorStoreService.initialize();
     })
     .catch((error) => Logger.error('Lỗi kết nối MongoDB:', error));
 

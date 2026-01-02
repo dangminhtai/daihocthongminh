@@ -3,6 +3,7 @@ import { chatConfig } from '../config/prompts/chat.prompts';
 import { GenerateContentParameters, Part } from '@google/genai';
 import fs from 'fs';
 import path from 'path';
+import VectorStoreService from './vectorStore.service';
 
 interface IMessagePart {
     text?: string;
@@ -41,7 +42,7 @@ const fileToGenerativePart = (uri: string, mimeType: string): Part => {
  * @returns - Phản hồi dạng văn bản từ AI.
  */
 export const getChatResponse = async (historyTurns: IChatTurn[], userMessageParts: IMessagePart[], useGoogleSearch: boolean = false): Promise<string> => {
-    
+
     const history = historyTurns.flatMap(turn => {
         const userParts = turn.user.parts.map(p => p.text ? { text: p.text } : fileToGenerativePart(p.fileData!.fileUri!, p.fileData!.mimeType!));
         const modelParts = turn.model.parts.map(p => ({ text: p.text || '' }));
@@ -53,23 +54,46 @@ export const getChatResponse = async (historyTurns: IChatTurn[], userMessagePart
 
     const newUserParts: Part[] = [];
     let hasFile = false;
+    let userTextQuery_forContext = "";
+
     for (const part of userMessageParts) {
         if (part.text) {
             newUserParts.push({ text: part.text });
+            userTextQuery_forContext += part.text + " ";
         }
         if (part.fileData) {
             hasFile = true;
             newUserParts.push(fileToGenerativePart(part.fileData.fileUri!, part.fileData.mimeType!));
         }
     }
-    
+
+    // --- CONTEXT INJECTION START ---
+    // Tìm kiếm trong Knowledge Base nếu có text query
+    // --- CONTEXT INJECTION START ---
+    // Tìm kiếm trong Knowledge Base nếu có text query
+    let systemInstruction = chatConfig.systemInstruction;
+    if (userTextQuery_forContext.trim()) {
+        try {
+            const context = await VectorStoreService.search(userTextQuery_forContext);
+
+            if (context) {
+                systemInstruction += `\n\n=== THÔNG TIN THAM KHẢO TỪ TÀI LIỆU NHÀ TRƯỜNG ===\nSử dụng thông tin dưới đây để trả lời nếu liên quan. Nếu không liên quan thì bỏ qua.\n\n${context}\n\n==================================================\n`;
+                console.log("--> Đã chèn context vào prompt.");
+                console.log("--> Context:", context);
+            }
+        } catch (err) {
+            console.error("Lỗi khi lấy context:", err);
+        }
+    }
+    // --- CONTEXT INJECTION END ---
+
     const contents = [...history, { role: 'user', parts: newUserParts }];
 
     const request: GenerateContentParameters = {
-        model: 'gemini-2.5-flash-lite', // gemini-2.5-flash hỗ trợ đầu vào đa phương thức
+        model: 'gemini-2.5-flash', // Hạ xuống 1.5-flash để ổn định (hoặc giữ 2.5-flash-lite nếu đã support)
         contents: contents,
         config: {
-            systemInstruction: chatConfig.systemInstruction,
+            systemInstruction: systemInstruction,
         },
     };
 
@@ -79,13 +103,13 @@ export const getChatResponse = async (historyTurns: IChatTurn[], userMessagePart
             tools: [{ googleSearch: {} }],
         };
     }
-    
+
     const response = await ai.models.generateContent(request);
     const responseText = response.text;
 
     if (typeof responseText !== 'string') {
         throw new Error("AI không đưa ra phản hồi hợp lệ.");
     }
-    
+
     return responseText;
 };
