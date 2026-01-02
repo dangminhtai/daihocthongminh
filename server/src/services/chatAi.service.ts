@@ -3,7 +3,6 @@ import { chatConfig } from '../config/prompts/chat.prompts';
 import { GenerateContentParameters, Part } from '@google/genai';
 import fs from 'fs';
 import path from 'path';
-import VectorStoreService from './vectorStore.service';
 
 interface IMessagePart {
     text?: string;
@@ -52,11 +51,16 @@ export const getChatResponse = async (historyTurns: IChatTurn[], userMessagePart
         ];
     });
 
+    // --- DEBUG ---
+    console.log("--> getChatResponse called. Query check starts.");
+    // --- DEBUG ---
+
     const newUserParts: Part[] = [];
     let hasFile = false;
     let userTextQuery_forContext = "";
 
     for (const part of userMessageParts) {
+        console.log("--> Part:", JSON.stringify(part));
         if (part.text) {
             newUserParts.push({ text: part.text });
             userTextQuery_forContext += part.text + " ";
@@ -67,25 +71,15 @@ export const getChatResponse = async (historyTurns: IChatTurn[], userMessagePart
         }
     }
 
-    // --- CONTEXT INJECTION START ---
-    // Tìm kiếm trong Knowledge Base nếu có text query
-    // --- CONTEXT INJECTION START ---
-    // Tìm kiếm trong Knowledge Base nếu có text query
+    // --- CONTEXT INJECTION DISABLED ---
+    // User requested to inject full files directly into prompt config instead of using vector store.
+    // See src/config/prompts/chat/config.ts
+    // ----------------------------------
     let systemInstruction = chatConfig.systemInstruction;
-    if (userTextQuery_forContext.trim()) {
-        try {
-            const context = await VectorStoreService.search(userTextQuery_forContext);
 
-            if (context) {
-                systemInstruction += `\n\n=== THÔNG TIN THAM KHẢO TỪ TÀI LIỆU NHÀ TRƯỜNG ===\nSử dụng thông tin dưới đây để trả lời nếu liên quan. Nếu không liên quan thì bỏ qua.\n\n${context}\n\n==================================================\n`;
-                console.log("--> Đã chèn context vào prompt.");
-                console.log("--> Context:", context);
-            }
-        } catch (err) {
-            console.error("Lỗi khi lấy context:", err);
-        }
-    }
-    // --- CONTEXT INJECTION END ---
+    console.log("=== FULL SYSTEM PROMPT START ===");
+    console.log(systemInstruction); // systemInstruction now includes the full MD files
+    console.log("=== FULL SYSTEM PROMPT END ===");
 
     const contents = [...history, { role: 'user', parts: newUserParts }];
 
