@@ -1,0 +1,29 @@
+Triển khai đề tài
+
+Việc triển khai website tư vấn hướng nghiệp này được xây dựng trên nền tảng web hiện đại, dễ dàng tiếp cận với sinh viên thông qua trình duyệt mà không cần cài đặt phức tạp. Hệ thống được chia thành hai phần chính: Client (Giao diện người dùng) và Server (Xử lý logic & AI).
+
+Về các công nghệ sử dụng:
+Frontend: ReactJS (Vite) – xây dựng giao diện người dùng tương tác, tốc độ cao, hiển thị nội dung tư vấn, thực hiện các bài trắc nghiệm và cho phép sinh viên trò chuyện trực tiếp với AI Mentor.
+Backend: Node.js (Express) – xử lý logic nghiệp vụ, tích hợp API của Google Gemini, quản lý xác thực người dùng (JWT) và xử lý dữ liệu.
+Database: MongoDB – lưu trữ thông tin sinh viên, lịch sử chat, kết quả trắc nghiệm và tài liệu nhà trường (Sổ tay SV, Quy chế).
+
+Các thư viện hỗ trợ:
+
+Frontend (Client):
+-	ReactJS & Vite – thư viện và công cụ build giúp phát triển giao diện web nhanh chóng, hiệu năng cao.
+-	React Router DOM – quản lý điều hướng giữa các trang (Trang chủ, Chat AI, Trắc nghiệm, Hồ sơ).
+-	Framer Motion – tạo các hiệu ứng chuyển động mượt mà, giúp trải nghiệm người dùng sinh động hơn.
+-	React Markdown & Remark GFM – hiển thị câu trả lời từ AI dưới định dạng văn bản phong phú (in đậm, danh sách, bảng biểu).
+-	Lucide React – bộ icon hiện đại, nhẹ nhàng cho giao diện.
+-	JSPDF – hỗ trợ xuất kết quả tư vấn hoặc CV thành file PDF.
+
+Backend (Server):
+-	Express – framework quản lý API, định tuyến request từ client đến server.
+-	@google/genai – thư viện chính chủ từ Google để giao tiếp với mô hình Gemini AI, trung tâm của tính năng tư vấn hướng nghiệp.
+-	Mongoose – thư viện dùng để mô hình hóa dữ liệu (Schema) và tương tác với MongoDB, giúp quản lý dữ liệu sinh viên chặt chẽ.
+-	Dotenv – quản lý các biến môi trường nhạy cảm (API Key, Database URI) để bảo mật hệ thống.
+-	Cors – cơ chế bảo mật cho phép frontend (khác domain/port) có thể gọi API hợp lệ đến backend.
+-	Bcrypt & JsonWebToken (JWT) – mã hóa mật khẩu và tạo token xác thực phiên đăng nhập, đảm bảo an toàn cho tài khoản sinh viên.
+-	Multer – hỗ trợ upload file (ví dụ: upload ảnh đại diện hoặc CV để AI phân tích).
+-	Nodemailer – gửi email tự động (xác thực tài khoản, thông báo).
+-	Nodemon – công cụ hỗ trợ dev, tự động restart server khi sửa code.
